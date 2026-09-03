@@ -1,5 +1,5 @@
 --// Kavo UI Library — Windows 98 Edition
---// ponytail: ultra — faithful 98.css recreation in Roblox UI instances
+--// ponytail: ultra — faithful 98.css in Roblox
 local Kavo = {}
 local UIS = game:GetService("UserInputService")
 local Mouse = game:GetService("Players").LocalPlayer:GetMouse()
@@ -10,7 +10,7 @@ local function pad(p,t,b,l,r) return mk("UIPadding",{PaddingTop=UDim.new(0,t),Pa
 local fl,cl = math.floor, math.clamp
 
 local function scrollFit(s,l)
-	local function u() s.CanvasSize=UDim2.fromOffset(0,l.AbsoluteContentSize.Y+4) end
+	local function u() s.CanvasSize=UDim2.fromOffset(0,l.AbsoluteContentSize.Y+8) end
 	l:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(u); u()
 end
 
@@ -21,187 +21,186 @@ local function drag(h,t)
 end
 
 -- Win98 palette
-local W98 = {
-	Face     = Color3.fromRGB(192,192,192), -- button face / window bg
-	HiLight  = Color3.fromRGB(255,255,255), -- raised top/left
-	Shadow   = Color3.fromRGB(128,128,128), -- raised bottom/right inner
-	DkShadow = Color3.fromRGB(0,0,0),       -- raised bottom/right outer / text
-	Window   = Color3.fromRGB(255,255,255), -- sunken input bg
-	Title    = Color3.fromRGB(0,0,128),     -- active title bar
-	TitleTx  = Color3.fromRGB(255,255,255), -- title text
-	Text     = Color3.fromRGB(0,0,0),       -- body text
-	Select   = Color3.fromRGB(0,0,128),     -- selection highlight
-	SelectTx = Color3.fromRGB(255,255,255), -- selected text
-	InTitle  = Color3.fromRGB(128,128,128), -- inactive title bar
+local W = {
+	Face   = Color3.fromRGB(192,192,192),
+	Hi     = Color3.fromRGB(255,255,255),
+	Sha    = Color3.fromRGB(128,128,128),
+	Dk     = Color3.fromRGB(0,0,0),
+	Win    = Color3.fromRGB(255,255,255),
+	Title  = Color3.fromRGB(0,0,128),
+	TitTx  = Color3.fromRGB(255,255,255),
+	Tx     = Color3.fromRGB(0,0,0),
+	Sel    = Color3.fromRGB(0,0,128),
+	SelTx  = Color3.fromRGB(255,255,255),
 }
 
--- 3D border: the core of Win98's look
--- "raised" = buttons, window frame  |  "sunken" = inputs, wells
-local function border98(parent, style)
-	-- 4 edge lines. Raised: white TL, dark BR. Sunken: dark TL, white BR.
-	local tl, br, tli, bri
-	if style == "raised" then
-		tl, br = W98.HiLight, W98.DkShadow
-		tli, bri = W98.Face, W98.Shadow
-	else -- sunken
-		tl, br = W98.Shadow, W98.HiLight
-		tli, bri = W98.DkShadow, W98.Face
-	end
-	-- outer top
-	mk("Frame",{Parent=parent,BackgroundColor3=tl,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,0,0),ZIndex=parent.ZIndex+1})
-	-- outer left
-	mk("Frame",{Parent=parent,BackgroundColor3=tl,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(0,0,0,0),ZIndex=parent.ZIndex+1})
-	-- outer bottom
-	mk("Frame",{Parent=parent,BackgroundColor3=br,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,-1),ZIndex=parent.ZIndex+1})
-	-- outer right
-	mk("Frame",{Parent=parent,BackgroundColor3=br,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,-1,0,0),ZIndex=parent.ZIndex+1})
-	-- inner top
-	mk("Frame",{Parent=parent,BackgroundColor3=tli,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.new(0,1,0,1),ZIndex=parent.ZIndex+1})
-	-- inner left
-	mk("Frame",{Parent=parent,BackgroundColor3=tli,BorderSizePixel=0,Size=UDim2.new(0,1,1,-2),Position=UDim2.new(0,1,0,1),ZIndex=parent.ZIndex+1})
-	-- inner bottom
-	mk("Frame",{Parent=parent,BackgroundColor3=bri,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.new(0,1,1,-2),ZIndex=parent.ZIndex+1})
-	-- inner right
-	mk("Frame",{Parent=parent,BackgroundColor3=bri,BorderSizePixel=0,Size=UDim2.new(0,1,1,-2),Position=UDim2.new(1,-2,0,1),ZIndex=parent.ZIndex+1})
+-- 3D borders — the entire Win98 identity
+local function raised(p,z)
+	z=z or p.ZIndex+1
+	mk("Frame",{Parent=p,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,-1),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,-1,0,0),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Face,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.fromOffset(1,1),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Face,BorderSizePixel=0,Size=UDim2.new(0,1,1,-2),Position=UDim2.fromOffset(1,1),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.new(0,1,1,-2),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(0,1,1,-2),Position=UDim2.new(1,-2,0,1),ZIndex=z})
 end
 
--- Win98 title bar button (minimize/maximize/close) — small raised rect with glyph
+local function sunken(p,z)
+	z=z or p.ZIndex+1
+	mk("Frame",{Parent=p,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,-1),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,-1,0,0),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.fromOffset(1,1),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.new(0,1,1,-2),Position=UDim2.fromOffset(1,1),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Face,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.new(0,1,1,-2),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Face,BorderSizePixel=0,Size=UDim2.new(0,1,1,-2),Position=UDim2.new(1,-2,0,1),ZIndex=z})
+end
+
+local function clearBorders(p)
+	for _,c in ipairs(p:GetChildren()) do if c:IsA("Frame") and c.Size.Y.Scale <= 0.01 or c.Size.X.Scale <= 0.01 then c:Destroy() end end
+end
+
+local function pressBorder(p)
+	-- sunken look on press
+	clearBorders(p)
+	sunken(p)
+end
+
+local function releaseBorder(p)
+	clearBorders(p)
+	raised(p)
+end
+
+-- Etched border for GroupBox
+local function etched(p,z)
+	z=z or p.ZIndex+1
+	mk("Frame",{Parent=p,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(1,-4,0,1),Position=UDim2.fromOffset(2,0),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(1,-4,0,1),Position=UDim2.fromOffset(2,1),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(0,1,1,-4),Position=UDim2.fromOffset(0,2),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(0,1,1,-4),Position=UDim2.fromOffset(1,2),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(1,-4,0,1),Position=UDim2.new(0,2,1,-2),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(1,-4,0,1),Position=UDim2.new(0,2,1,-1),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(0,1,1,-4),Position=UDim2.new(1,-2,0,2),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(0,1,1,-4),Position=UDim2.new(1,-1,0,2),ZIndex=z})
+end
+
+-- Win98 title bar button
 local function titleBtn(parent, glyph, onClick)
-	local b = mk("TextButton",{Parent=parent,BackgroundColor3=W98.Face,Size=UDim2.fromOffset(16,14),AutoButtonColor=false,Font=Enum.Font.RobotoMono,Text=glyph,TextColor3=W98.Text,TextSize=10,BorderSizePixel=0,LayoutOrder=1})
-	border98(b,"raised")
-	b.MouseButton1Down:Connect(function()
-		-- clear old borders, draw sunken
-		for _,c in ipairs(b:GetChildren()) do if c:IsA("Frame") then c:Destroy() end end
-		border98(b,"sunken")
-	end)
-	b.MouseButton1Up:Connect(function()
-		for _,c in ipairs(b:GetChildren()) do if c:IsA("Frame") then c:Destroy() end end
-		border98(b,"raised")
-	end)
+	local b = mk("TextButton",{Parent=parent,BackgroundColor3=W.Face,Size=UDim2.fromOffset(16,14),AutoButtonColor=false,Font=Enum.Font.RobotoMono,Text=glyph,TextColor3=W.Tx,TextSize=10,BorderSizePixel=0})
+	raised(b)
+	b.MouseButton1Down:Connect(function() pressBorder(b) end)
+	b.MouseButton1Up:Connect(function() releaseBorder(b) end)
 	if onClick then b.MouseButton1Click:Connect(onClick) end
 	return b
 end
 
--- Etched border for group boxes (sections) — double line sunken+raised
-local function etchedBorder(parent)
-	-- top dark then light
-	mk("Frame",{Parent=parent,BackgroundColor3=W98.Shadow,BorderSizePixel=0,Size=UDim2.new(1,-4,0,1),Position=UDim2.new(0,2,0,0),ZIndex=parent.ZIndex+1})
-	mk("Frame",{Parent=parent,BackgroundColor3=W98.HiLight,BorderSizePixel=0,Size=UDim2.new(1,-4,0,1),Position=UDim2.new(0,2,0,1),ZIndex=parent.ZIndex+1})
-	-- left
-	mk("Frame",{Parent=parent,BackgroundColor3=W98.Shadow,BorderSizePixel=0,Size=UDim2.new(0,1,1,-4),Position=UDim2.new(0,0,0,2),ZIndex=parent.ZIndex+1})
-	mk("Frame",{Parent=parent,BackgroundColor3=W98.HiLight,BorderSizePixel=0,Size=UDim2.new(0,1,1,-4),Position=UDim2.new(0,1,0,2),ZIndex=parent.ZIndex+1})
-	-- bottom
-	mk("Frame",{Parent=parent,BackgroundColor3=W98.Shadow,BorderSizePixel=0,Size=UDim2.new(1,-4,0,1),Position=UDim2.new(0,2,1,-2),ZIndex=parent.ZIndex+1})
-	mk("Frame",{Parent=parent,BackgroundColor3=W98.HiLight,BorderSizePixel=0,Size=UDim2.new(1,-4,0,1),Position=UDim2.new(0,2,1,-1),ZIndex=parent.ZIndex+1})
-	-- right
-	mk("Frame",{Parent=parent,BackgroundColor3=W98.Shadow,BorderSizePixel=0,Size=UDim2.new(0,1,1,-4),Position=UDim2.new(1,-2,0,2),ZIndex=parent.ZIndex+1})
-	mk("Frame",{Parent=parent,BackgroundColor3=W98.HiLight,BorderSizePixel=0,Size=UDim2.new(0,1,1,-4),Position=UDim2.new(1,-1,0,2),ZIndex=parent.ZIndex+1})
-end
-
 local LID="Kavo_"..math.random(1e5,9e5)
 function Kavo:ToggleUI() local g=game.CoreGui:FindFirstChild(LID); if g then g.Enabled=not g.Enabled end end
-function Kavo:ChangeColor() end -- ponytail: no-op, Win98 has one look
+function Kavo:ChangeColor() end -- ponytail: no-op
 
 function Kavo.CreateLib(title, _themeIn)
 	title = title or "Library"
-	Kavo._theme = {} -- ponytail: kept for compat, unused
+	Kavo._theme = {}
 	for _,v in ipairs(game.CoreGui:GetChildren()) do if v.Name==LID then v:Destroy() end end
 
-	local gui = mk("ScreenGui",{Name=LID,Parent=game.CoreGui,ZIndexBehavior=Enum.ZIndexBehavior.Sibling,ResetOnSpawn=false})
+	local gui = mk("ScreenGui",{Name=LID,Parent=game.CoreGui,ZIndexBehavior=Enum.ZIndexBehavior.Global,ResetOnSpawn=false})
 
-	-- Main window frame
-	local main = mk("Frame",{Name="Main",Parent=gui,BackgroundColor3=W98.Face,ClipsDescendants=true,Position=UDim2.new(0.5,-260,0.5,-180),Size=UDim2.fromOffset(520,360),BorderSizePixel=0})
-	border98(main,"raised")
+	-- Popup layer — dropdown lists render here so they aren't clipped by ScrollingFrame
+	local popupLayer = mk("Frame",{Name="Popups",Parent=gui,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),ZIndex=100})
+
+	-- Main window
+	local main = mk("Frame",{Name="Main",Parent=gui,BackgroundColor3=W.Face,ClipsDescendants=true,Position=UDim2.new(0.5,-260,0.5,-190),Size=UDim2.fromOffset(520,380),BorderSizePixel=0,ZIndex=1})
+	raised(main,2)
 
 	-- Title bar
-	local hdr = mk("Frame",{Parent=main,BackgroundColor3=W98.Title,Size=UDim2.new(1,-4,0,18),Position=UDim2.fromOffset(2,2),BorderSizePixel=0})
+	local hdr = mk("Frame",{Parent=main,BackgroundColor3=W.Title,Size=UDim2.new(1,-6,0,20),Position=UDim2.fromOffset(3,3),BorderSizePixel=0,ZIndex=3})
 	drag(hdr,main)
-	mk("TextLabel",{Parent=hdr,BackgroundTransparency=1,Position=UDim2.fromOffset(2,0),Size=UDim2.new(1,-54,1,0),Font=Enum.Font.SourceSansBold,Text=title,RichText=true,TextColor3=W98.TitleTx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left})
+	mk("TextLabel",{Parent=hdr,BackgroundTransparency=1,Position=UDim2.fromOffset(3,0),Size=UDim2.new(1,-58,1,0),Font=Enum.Font.SourceSansBold,Text=title,RichText=true,TextColor3=W.TitTx,TextSize=14,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=4})
 
-	-- Title bar buttons container
-	local btnBar = mk("Frame",{Parent=hdr,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,-2,0.5,0),Size=UDim2.fromOffset(54,14)})
+	-- Title buttons
+	local btnBar = mk("Frame",{Parent=hdr,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,-2,0.5,0),Size=UDim2.fromOffset(54,14),ZIndex=4})
 	list(btnBar,2,Enum.FillDirection.Horizontal)
 	titleBtn(btnBar,"_",nil)
 	titleBtn(btnBar,"□",nil)
 	titleBtn(btnBar,"×",function() gui:Destroy() end)
 
-	-- Menu bar area (thin separator line)
-	mk("Frame",{Parent=main,BackgroundColor3=W98.Shadow,Size=UDim2.new(1,-4,0,1),Position=UDim2.fromOffset(2,21),BorderSizePixel=0})
-
-	-- Tab row (horizontal, below title bar)
-	local tabRow = mk("Frame",{Parent=main,BackgroundTransparency=1,Position=UDim2.fromOffset(2,24),Size=UDim2.new(1,-4,0,22),BorderSizePixel=0})
+	-- Tab row
+	local tabRow = mk("Frame",{Parent=main,BackgroundTransparency=1,Position=UDim2.fromOffset(3,26),Size=UDim2.new(1,-6,0,24),BorderSizePixel=0,ZIndex=3})
 	list(tabRow,0,Enum.FillDirection.Horizontal)
 
-	-- Content area
-	local content = mk("Frame",{Parent=main,BackgroundColor3=W98.Face,Position=UDim2.fromOffset(2,45),Size=UDim2.new(1,-4,1,-49),BorderSizePixel=0})
-	border98(content,"sunken")
+	-- Content well (sunken)
+	local content = mk("Frame",{Parent=main,BackgroundColor3=W.Face,Position=UDim2.fromOffset(3,48),Size=UDim2.new(1,-6,1,-70),BorderSizePixel=0,ZIndex=3})
+	sunken(content,4)
 
 	-- Status bar
-	local statusBar = mk("Frame",{Parent=main,BackgroundColor3=W98.Face,Position=UDim2.new(0,2,1,-18),Size=UDim2.new(1,-4,0,16),BorderSizePixel=0})
-	border98(statusBar,"sunken")
-	local statusTx = mk("TextLabel",{Parent=statusBar,BackgroundTransparency=1,Position=UDim2.fromOffset(4,0),Size=UDim2.new(1,-8,1,0),Font=Enum.Font.SourceSans,Text="Ready",TextColor3=W98.Text,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left})
+	local sbar = mk("Frame",{Parent=main,BackgroundColor3=W.Face,Position=UDim2.new(0,3,1,-19),Size=UDim2.new(1,-6,0,16),BorderSizePixel=0,ZIndex=3})
+	sunken(sbar,4)
+	mk("TextLabel",{Parent=sbar,BackgroundTransparency=1,Position=UDim2.fromOffset(4,0),Size=UDim2.new(1,-8,1,0),Font=Enum.Font.SourceSans,Text="Ready",TextColor3=W.Tx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=5})
 
 	-- Notification holder
-	local nHolder = mk("Frame",{Parent=gui,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0),Position=UDim2.new(1,-8,0,8),Size=UDim2.fromOffset(250,400)})
+	local nHolder = mk("Frame",{Parent=gui,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0),Position=UDim2.new(1,-12,0,12),Size=UDim2.fromOffset(260,500),ZIndex=90})
 	list(nHolder,4)
 
 	function Kavo:Notify(cfg)
 		cfg = cfg or {}
-		-- Win98 message box style
-		local n = mk("Frame",{Parent=nHolder,BackgroundColor3=W98.Face,Size=UDim2.new(1,0,0,60),BorderSizePixel=0})
-		border98(n,"raised")
-		local nh = mk("Frame",{Parent=n,BackgroundColor3=W98.Title,Size=UDim2.new(1,-4,0,18),Position=UDim2.fromOffset(2,2),BorderSizePixel=0})
-		mk("TextLabel",{Parent=nh,BackgroundTransparency=1,Position=UDim2.fromOffset(2,0),Size=UDim2.new(1,-4,1,0),Font=Enum.Font.SourceSansBold,Text=cfg.Title or "Notice",TextColor3=W98.TitleTx,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left})
-		mk("TextLabel",{Parent=n,BackgroundTransparency=1,Position=UDim2.fromOffset(6,24),Size=UDim2.new(1,-12,0,30),Font=Enum.Font.SourceSans,Text=cfg.Text or "",TextColor3=W98.Text,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left,TextWrapped=true})
+		local n = mk("Frame",{Parent=nHolder,BackgroundColor3=W.Face,Size=UDim2.new(1,0,0,68),BorderSizePixel=0,ZIndex=91})
+		raised(n,92)
+		local nh = mk("Frame",{Parent=n,BackgroundColor3=W.Title,Size=UDim2.new(1,-6,0,20),Position=UDim2.fromOffset(3,3),BorderSizePixel=0,ZIndex=93})
+		mk("TextLabel",{Parent=nh,BackgroundTransparency=1,Position=UDim2.fromOffset(3,0),Size=UDim2.new(1,-6,1,0),Font=Enum.Font.SourceSansBold,Text=cfg.Title or "Notice",TextColor3=W.TitTx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=94})
+		mk("TextLabel",{Parent=n,BackgroundTransparency=1,Position=UDim2.fromOffset(8,28),Size=UDim2.new(1,-16,0,34),Font=Enum.Font.SourceSans,Text=cfg.Text or "",TextColor3=W.Tx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,TextWrapped=true,ZIndex=93})
 		task.delay(cfg.Duration or 4, function() n:Destroy() end)
 	end
 
-	local W = {}; local first = true
+	-- Close any open dropdown popup when clicking elsewhere
+	local activePopup = nil
+	local function closePopup()
+		if activePopup then activePopup:Destroy(); activePopup=nil end
+	end
 
-	function W:NewTab(name)
+	local Lib = {}; local first = true
+
+	function Lib:NewTab(name)
 		name = name or "Tab"
 
-		-- Tab button — raised 3D, active tab gets merged-into-body look
-		local btn = mk("TextButton",{Parent=tabRow,BackgroundColor3=W98.Face,Size=UDim2.new(0,0,1,2),AutomaticSize=Enum.AutomaticSize.X,AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=name,TextColor3=W98.Text,TextSize=12,BorderSizePixel=0,LayoutOrder=#tabRow:GetChildren()})
-		pad(btn,2,2,8,8)
-		-- Tab top/left/right raised borders (no bottom when active)
-		local tabTopOuter = mk("Frame",{Parent=btn,BackgroundColor3=W98.HiLight,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,0,0),ZIndex=btn.ZIndex+1})
-		local tabLeftOuter = mk("Frame",{Parent=btn,BackgroundColor3=W98.HiLight,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(0,0,0,0),ZIndex=btn.ZIndex+1})
-		local tabRightOuter = mk("Frame",{Parent=btn,BackgroundColor3=W98.DkShadow,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,-1,0,0),ZIndex=btn.ZIndex+1})
-		local tabTopInner = mk("Frame",{Parent=btn,BackgroundColor3=W98.HiLight,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.new(0,1,0,1),ZIndex=btn.ZIndex+1})
-		local tabRightInner = mk("Frame",{Parent=btn,BackgroundColor3=W98.Shadow,BorderSizePixel=0,Size=UDim2.new(0,1,1,-1),Position=UDim2.new(1,-2,0,1),ZIndex=btn.ZIndex+1})
-		local tabBottom = mk("Frame",{Parent=btn,BackgroundColor3=W98.Face,BorderSizePixel=0,Size=UDim2.new(1,0,0,2),Position=UDim2.new(0,0,1,-2),ZIndex=btn.ZIndex+2})
+		local btn = mk("TextButton",{Parent=tabRow,BackgroundColor3=W.Face,Size=UDim2.new(0,0,0,24),AutomaticSize=Enum.AutomaticSize.X,AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=name,TextColor3=W.Tx,TextSize=14,BorderSizePixel=0,ZIndex=5})
+		pad(btn,3,5,10,10)
+
+		-- Tab borders: top, left, right raised — bottom hidden when active
+		mk("Frame",{Name="TTop",Parent=btn,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(),ZIndex=6})
+		mk("Frame",{Name="TLeft",Parent=btn,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(),ZIndex=6})
+		mk("Frame",{Name="TRight",Parent=btn,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,-1,0,0),ZIndex=6})
+		mk("Frame",{Name="TRightIn",Parent=btn,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(0,1,1,-1),Position=UDim2.new(1,-2,0,1),ZIndex=6})
+		-- Bottom cover (hides content border when active)
+		local btm = mk("Frame",{Name="TabBottom",Parent=btn,BackgroundColor3=W.Face,BorderSizePixel=0,Size=UDim2.new(1,-2,0,2),Position=UDim2.new(0,1,1,-2),ZIndex=7})
 
 		-- Page
-		local pg = mk("ScrollingFrame",{Parent=content,BackgroundColor3=W98.Face,BackgroundTransparency=0,Size=UDim2.new(1,-4,1,-4),Position=UDim2.fromOffset(2,2),ScrollBarThickness=16,ScrollBarImageColor3=W98.Face,BorderSizePixel=0,Visible=false,CanvasSize=UDim2.fromOffset(0,0)})
-		local pgLay = list(pg,4); pad(pg,6,6,8,8); scrollFit(pg,pgLay)
+		local pg = mk("ScrollingFrame",{Parent=content,BackgroundColor3=W.Face,BackgroundTransparency=0,Size=UDim2.new(1,-4,1,-4),Position=UDim2.fromOffset(2,2),ScrollBarThickness=16,ScrollBarImageColor3=W.Face,BorderSizePixel=0,Visible=false,CanvasSize=UDim2.fromOffset(0,0),ZIndex=5})
+		local pgLay = list(pg,6); pad(pg,8,8,10,10); scrollFit(pg,pgLay)
 
 		local function activate()
-			-- Deactivate all tabs
+			closePopup()
 			for _,b in ipairs(tabRow:GetChildren()) do
 				if b:IsA("TextButton") then
 					b.Font = Enum.Font.SourceSans
-					b.Size = UDim2.new(0,0,1,0)
-					b.Position = UDim2.new(b.Position.X.Scale, b.Position.X.Offset, 0, 2)
-					-- Show bottom line (inactive tab)
-					for _,ch in ipairs(b:GetChildren()) do
-						if ch.Name == "TabBottom" then ch.Visible = false end
-					end
+					b.Size = UDim2.new(0,0,0,22)
+					b.Position = UDim2.fromOffset(0,2)
+					local bb = b:FindFirstChild("TabBottom")
+					if bb then bb.Visible = false end
 				end
 			end
 			for _,p in ipairs(content:GetChildren()) do if p:IsA("ScrollingFrame") then p.Visible=false end end
 
-			-- Activate this tab
 			btn.Font = Enum.Font.SourceSansBold
-			btn.Size = UDim2.new(0,0,1,2)
-			btn.Position = UDim2.new(btn.Position.X.Scale, btn.Position.X.Offset, 0, 0)
-			tabBottom.Visible = true
+			btn.Size = UDim2.new(0,0,0,26)
+			btn.Position = UDim2.fromOffset(0,0)
+			btm.Visible = true
 			pg.Visible = true
 		end
 
-		tabBottom.Name = "TabBottom"
-		if first then first=false; activate() else tabBottom.Visible=false; btn.Size=UDim2.new(0,0,1,0); btn.Position=UDim2.fromOffset(0,2) end
-
+		if first then first=false; activate() else btm.Visible=false; btn.Size=UDim2.new(0,0,0,22); btn.Position=UDim2.fromOffset(0,2) end
 		btn.MouseButton1Click:Connect(activate)
 
 		local Tab = {}
@@ -209,172 +208,160 @@ function Kavo.CreateLib(title, _themeIn)
 		function Tab:NewSection(secName)
 			secName = secName or "Section"
 
-			-- GroupBox wrapper with etched border
-			local box = mk("Frame",{Parent=pg,BackgroundColor3=W98.Face,Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y,BorderSizePixel=0})
-			pad(box,12,6,0,0)
-			etchedBorder(box)
+			local box = mk("Frame",{Parent=pg,BackgroundColor3=W.Face,Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y,BorderSizePixel=0,ZIndex=5})
+			pad(box,16,8,2,2)
+			etched(box,6)
 
-			-- Legend label (sits on top edge of etched border)
-			mk("TextLabel",{Parent=box,BackgroundColor3=W98.Face,Position=UDim2.fromOffset(8,-8),Size=UDim2.new(0,0,0,14),AutomaticSize=Enum.AutomaticSize.X,Font=Enum.Font.SourceSans,Text="  "..secName.."  ",RichText=true,TextColor3=W98.Text,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left,BorderSizePixel=0,ZIndex=box.ZIndex+2})
+			-- Legend on the etched border
+			local legend = mk("TextLabel",{Parent=box,BackgroundColor3=W.Face,Position=UDim2.fromOffset(10,-7),Size=UDim2.new(0,0,0,14),AutomaticSize=Enum.AutomaticSize.X,Font=Enum.Font.SourceSans,Text=" "..secName.." ",RichText=true,TextColor3=W.Tx,TextSize=14,TextXAlignment=Enum.TextXAlignment.Left,BorderSizePixel=0,ZIndex=7})
 
-			local inner = mk("Frame",{Parent=box,BackgroundTransparency=1,Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y,Position=UDim2.fromOffset(0,4)})
-			list(inner,1); pad(inner,4,6,8,8)
+			local inner = mk("Frame",{Parent=box,BackgroundTransparency=1,Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y,ZIndex=5})
+			list(inner,4); pad(inner,4,4,10,10)
 
 			local S = {}
-			function S:UpdateSection(t)
-				for _,c in ipairs(box:GetChildren()) do
-					if c:IsA("TextLabel") and c.Position.Y.Offset < 0 then c.Text="  "..t.."  " end
-				end
-			end
+			function S:UpdateSection(t) legend.Text=" "..t.." " end
 
-			-- Row helper: flat frame, no hover effects (Win98 doesn't do hover on list items)
-			local function row()
-				return mk("Frame",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,22),BorderSizePixel=0})
-			end
-			local function label(p,t)
-				return mk("TextLabel",{Parent=p,BackgroundTransparency=1,Position=UDim2.fromOffset(0,0),Size=UDim2.new(1,-80,1,0),Font=Enum.Font.SourceSans,Text=t,RichText=true,TextColor3=W98.Text,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left})
+			local function row(h)
+				return mk("Frame",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,h or 24),BorderSizePixel=0,ZIndex=5})
 			end
 
 			function S:NewButton(n,tip,cb) n=n or "Button";cb=cb or function()end
-				local f = row()
-				local b = mk("TextButton",{Parent=f,BackgroundColor3=W98.Face,AnchorPoint=Vector2.new(0,0.5),Position=UDim2.new(0,0,0.5,0),Size=UDim2.new(1,0,0,22),AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=n,TextColor3=W98.Text,TextSize=12,BorderSizePixel=0})
-				border98(b,"raised")
-				b.MouseButton1Down:Connect(function()
-					for _,c in ipairs(b:GetChildren()) do if c:IsA("Frame") then c:Destroy() end end
-					border98(b,"sunken")
-				end)
-				b.MouseButton1Up:Connect(function()
-					for _,c in ipairs(b:GetChildren()) do if c:IsA("Frame") then c:Destroy() end end
-					border98(b,"raised")
-				end)
-				b.MouseButton1Click:Connect(function() cb() end)
+				local f = row(26)
+				local b = mk("TextButton",{Parent=f,BackgroundColor3=W.Face,AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,0),Size=UDim2.new(1,0,0,24),AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=14,BorderSizePixel=0,ZIndex=6})
+				raised(b,7)
+				b.MouseButton1Down:Connect(function() pressBorder(b) end)
+				b.MouseButton1Up:Connect(function() releaseBorder(b) end)
+				b.MouseButton1Click:Connect(cb)
 				local Fn={}; function Fn:UpdateButton(t) b.Text=t end; return Fn
 			end
 
 			function S:NewToggle(n,tip,cb) n=n or "Toggle";cb=cb or function()end; local on=false
-				local f = row()
-				-- Win98 checkbox: sunken 13x13 square
-				local chk = mk("Frame",{Parent=f,BackgroundColor3=W98.Window,AnchorPoint=Vector2.new(0,0.5),Position=UDim2.new(0,0,0.5,0),Size=UDim2.fromOffset(13,13),BorderSizePixel=0})
-				border98(chk,"sunken")
-				local mark = mk("TextLabel",{Parent=chk,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Font=Enum.Font.SourceSansBold,Text="",TextColor3=W98.Text,TextSize=12,TextXAlignment=Enum.TextXAlignment.Center})
-				local lbl = mk("TextLabel",{Parent=f,BackgroundTransparency=1,Position=UDim2.fromOffset(18,0),Size=UDim2.new(1,-18,1,0),Font=Enum.Font.SourceSans,Text=n,RichText=true,TextColor3=W98.Text,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left})
-				-- Click area over whole row
-				local hit = mk("TextButton",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Text="",BorderSizePixel=0,ZIndex=f.ZIndex+3})
+				local f = row(22)
+				local chk = mk("Frame",{Parent=f,BackgroundColor3=W.Win,AnchorPoint=Vector2.new(0,0.5),Position=UDim2.new(0,0,0.5,0),Size=UDim2.fromOffset(13,13),BorderSizePixel=0,ZIndex=6})
+				sunken(chk,7)
+				local mark = mk("TextLabel",{Parent=chk,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Font=Enum.Font.SourceSansBold,Text="",TextColor3=W.Tx,TextSize=14,ZIndex=8})
+				local lbl = mk("TextLabel",{Parent=f,BackgroundTransparency=1,Position=UDim2.fromOffset(18,0),Size=UDim2.new(1,-18,1,0),Font=Enum.Font.SourceSans,Text=n,RichText=true,TextColor3=W.Tx,TextSize=14,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
+				local hit = mk("TextButton",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Text="",BorderSizePixel=0,ZIndex=9})
 				local function set(v) on=v; mark.Text=v and "✓" or "" end
 				hit.MouseButton1Click:Connect(function() set(not on); pcall(cb,on) end)
 				local Fn={}; function Fn:UpdateToggle(t,s) if t then lbl.Text=t end; if s~=nil then set(s);pcall(cb,s) end end; return Fn
 			end
 
 			function S:NewSlider(n,tip,maxV,minV,cb) n=n or "Slider";maxV=maxV or 100;minV=minV or 0;cb=cb or function()end
-				local f = mk("Frame",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,36),BorderSizePixel=0})
-				local sl = mk("TextLabel",{Parent=f,BackgroundTransparency=1,Position=UDim2.fromOffset(0,0),Size=UDim2.new(0.5,0,0,14),Font=Enum.Font.SourceSans,Text=n,TextColor3=W98.Text,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left})
-				local vl = mk("TextLabel",{Parent=f,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0),Position=UDim2.new(1,0,0,0),Size=UDim2.fromOffset(40,14),Font=Enum.Font.SourceSans,Text=tostring(minV),TextColor3=W98.Text,TextSize=12,TextXAlignment=Enum.TextXAlignment.Right})
+				local f = mk("Frame",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,38),BorderSizePixel=0,ZIndex=5})
+				mk("TextLabel",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(0.6,0,0,16),Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=14,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
+				local vl = mk("TextLabel",{Parent=f,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0),Position=UDim2.new(1,0,0,0),Size=UDim2.fromOffset(50,16),Font=Enum.Font.SourceSans,Text=tostring(minV),TextColor3=W.Tx,TextSize=14,TextXAlignment=Enum.TextXAlignment.Right,ZIndex=6})
 				-- Sunken track
-				local track = mk("Frame",{Parent=f,BackgroundColor3=W98.Shadow,Position=UDim2.new(0,0,0,18),Size=UDim2.new(1,0,0,4),BorderSizePixel=0})
-				border98(track,"sunken")
+				local track = mk("Frame",{Parent=f,BackgroundColor3=W.Sha,Position=UDim2.new(0,4,0,22),Size=UDim2.new(1,-8,0,6),BorderSizePixel=0,ZIndex=6})
+				sunken(track,7)
 				-- Raised thumb
-				local thumb = mk("Frame",{Parent=f,BackgroundColor3=W98.Face,Position=UDim2.new(0,0,0,14),Size=UDim2.fromOffset(11,12),BorderSizePixel=0,ZIndex=f.ZIndex+2})
-				border98(thumb,"raised")
+				local thumb = mk("Frame",{Parent=f,BackgroundColor3=W.Face,Position=UDim2.new(0,0,0,18),Size=UDim2.fromOffset(12,14),BorderSizePixel=0,ZIndex=8})
+				raised(thumb,9)
 				local dragging = false
-				local function upd(i)
-					local r = cl((i.Position.X - track.AbsolutePosition.X) / track.AbsoluteSize.X, 0, 1)
-					thumb.Position = UDim2.new(r, -5, 0, 14)
+				local function upd(x)
+					local r = cl((x - track.AbsolutePosition.X) / track.AbsoluteSize.X, 0, 1)
+					thumb.Position = UDim2.new(0, 4 + fl(r * (track.AbsoluteSize.X - 12)), 0, 18)
 					local v = fl(minV + r * (maxV - minV))
 					vl.Text = tostring(v); pcall(cb, v)
 				end
-				track.InputBegan:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=true;upd(i) end end)
+				track.InputBegan:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=true;upd(i.Position.X) end end)
 				thumb.InputBegan:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=true end end)
-				UIS.InputChanged:Connect(function(i) if dragging and i.UserInputType==Enum.UserInputType.MouseMovement then upd(i) end end)
+				UIS.InputChanged:Connect(function(i) if dragging and i.UserInputType==Enum.UserInputType.MouseMovement then upd(i.Position.X) end end)
 				UIS.InputEnded:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=false end end)
 			end
 
 			function S:NewTextBox(n,tip,cb) n=n or "Input";cb=cb or function()end
-				local f = row()
-				mk("TextLabel",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(0.35,0,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W98.Text,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left})
-				-- Sunken white input field
-				local bx = mk("TextBox",{Parent=f,BackgroundColor3=W98.Window,Position=UDim2.new(0.38,0,0.5,0),AnchorPoint=Vector2.new(0,0.5),Size=UDim2.new(0.62,0,0,18),Font=Enum.Font.SourceSans,PlaceholderText="",PlaceholderColor3=W98.Shadow,Text="",TextColor3=W98.Text,TextSize=12,ClearTextOnFocus=false,BorderSizePixel=0,ClipsDescendants=true})
-				border98(bx,"sunken")
+				local f = row(24)
+				mk("TextLabel",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(0.3,0,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=14,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
+				local bx = mk("TextBox",{Parent=f,BackgroundColor3=W.Win,Position=UDim2.new(0.32,0,0.5,0),AnchorPoint=Vector2.new(0,0.5),Size=UDim2.new(0.68,0,0,20),Font=Enum.Font.SourceSans,PlaceholderText="",PlaceholderColor3=W.Sha,Text="",TextColor3=W.Tx,TextSize=14,ClearTextOnFocus=false,BorderSizePixel=0,ClipsDescendants=true,ZIndex=6})
+				sunken(bx,7)
 				bx.FocusLost:Connect(function(e) if e then pcall(cb,bx.Text); bx.Text="" end end)
 			end
 
 			function S:NewKeybind(n,tip,dk,cb) n=n or "Keybind";cb=cb or function()end; local key=dk
-				local f = row()
-				mk("TextLabel",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(1,-60,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W98.Text,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left})
-				-- Sunken key display
-				local kd = mk("Frame",{Parent=f,BackgroundColor3=W98.Window,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,0,0.5,0),Size=UDim2.fromOffset(56,18),BorderSizePixel=0})
-				border98(kd,"sunken")
-				local kl = mk("TextLabel",{Parent=kd,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Font=Enum.Font.SourceSans,Text=key and key.Name or "-",TextColor3=W98.Text,TextSize=11,TextXAlignment=Enum.TextXAlignment.Center})
+				local f = row(24)
+				mk("TextLabel",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(1,-64,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=14,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
+				local kd = mk("Frame",{Parent=f,BackgroundColor3=W.Win,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,0,0.5,0),Size=UDim2.fromOffset(58,20),BorderSizePixel=0,ZIndex=6})
+				sunken(kd,7)
+				local kl = mk("TextLabel",{Parent=kd,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Font=Enum.Font.SourceSans,Text=key and key.Name or "None",TextColor3=W.Tx,TextSize=13,ZIndex=8})
 				local listening = false
-				local hit = mk("TextButton",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Text="",BorderSizePixel=0,ZIndex=f.ZIndex+3})
-				hit.MouseButton1Click:Connect(function() if listening then return end; listening=true;kl.Text="..."; local i=UIS.InputBegan:Wait(); if i.KeyCode~=Enum.KeyCode.Unknown then key=i.KeyCode;kl.Text=key.Name end; listening=false end)
+				local hit = mk("TextButton",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Text="",BorderSizePixel=0,ZIndex=9})
+				hit.MouseButton1Click:Connect(function()
+					if listening then return end; listening=true; kl.Text="..."
+					local i=UIS.InputBegan:Wait()
+					if i.KeyCode~=Enum.KeyCode.Unknown then key=i.KeyCode;kl.Text=key.Name end
+					listening=false
+				end)
 				UIS.InputBegan:Connect(function(i,g) if not g and key and i.KeyCode==key then pcall(cb) end end)
 			end
 
-			function S:NewDropdown(n,tip,items,cb) n=n or "Select";items=items or {};cb=cb or function()end; local open=false
-				local wrap = mk("Frame",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,22),ClipsDescendants=true,BorderSizePixel=0})
+			function S:NewDropdown(n,tip,items,cb) n=n or "Select";items=items or {};cb=cb or function()end
+				local f = row(24)
+				mk("TextLabel",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(0.3,0,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=14,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
 
-				-- Header row: label + sunken select box + arrow button
-				local head = mk("Frame",{Parent=wrap,BackgroundTransparency=1,Size=UDim2.new(1,0,0,22),BorderSizePixel=0})
-				mk("TextLabel",{Parent=head,BackgroundTransparency=1,Size=UDim2.new(0.35,0,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W98.Text,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left})
-				-- Sunken display
-				local disp = mk("Frame",{Parent=head,BackgroundColor3=W98.Window,Position=UDim2.new(0.38,0,0,1),Size=UDim2.new(0.62,-18,0,20),BorderSizePixel=0})
-				border98(disp,"sunken")
-				local dispTx = mk("TextLabel",{Parent=disp,BackgroundTransparency=1,Position=UDim2.fromOffset(3,0),Size=UDim2.new(1,-6,1,0),Font=Enum.Font.SourceSans,Text="",TextColor3=W98.Text,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left,ClipsDescendants=true})
+				-- Sunken display field
+				local disp = mk("Frame",{Parent=f,BackgroundColor3=W.Win,Position=UDim2.new(0.32,0,0.5,0),AnchorPoint=Vector2.new(0,0.5),Size=UDim2.new(0.68,-18,0,20),BorderSizePixel=0,ZIndex=6})
+				sunken(disp,7)
+				local dispTx = mk("TextLabel",{Parent=disp,BackgroundTransparency=1,Position=UDim2.fromOffset(4,0),Size=UDim2.new(1,-8,1,0),Font=Enum.Font.SourceSans,Text="",TextColor3=W.Tx,TextSize=14,TextXAlignment=Enum.TextXAlignment.Left,ClipsDescendants=true,ZIndex=8})
+
 				-- Arrow button
-				local arr = mk("TextButton",{Parent=head,BackgroundColor3=W98.Face,AnchorPoint=Vector2.new(1,0),Position=UDim2.new(1,0,0,1),Size=UDim2.fromOffset(16,20),AutoButtonColor=false,Font=Enum.Font.SourceSans,Text="▼",TextColor3=W98.Text,TextSize=8,BorderSizePixel=0})
-				border98(arr,"raised")
+				local arr = mk("TextButton",{Parent=f,BackgroundColor3=W.Face,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,0,0.5,0),Size=UDim2.fromOffset(16,20),AutoButtonColor=false,Font=Enum.Font.SourceSans,Text="▼",TextColor3=W.Tx,TextSize=10,BorderSizePixel=0,ZIndex=6})
+				raised(arr,7)
 
-				-- Options list (below header)
-				local opts = mk("Frame",{Parent=wrap,BackgroundColor3=W98.Window,Position=UDim2.fromOffset(fl(wrap.AbsoluteSize.X*0.38),22),Size=UDim2.new(0.62,0,0,0),AutomaticSize=Enum.AutomaticSize.Y,BorderSizePixel=0,Visible=false,ZIndex=wrap.ZIndex+5})
-				border98(opts,"sunken")
+				-- Build options in popup layer (not clipped by ScrollingFrame)
+				local function buildPopup(lst)
+					closePopup()
+					local itemH = 18
+					local popH = #lst * itemH + 4
+					local absPos = disp.AbsolutePosition
+					local absW = disp.AbsoluteSize.X + 16
 
-				-- Defer positioning until layout settles
-				task.defer(function()
-					opts.Position = UDim2.new(0.38,0,0,22)
-				end)
+					local popup = mk("Frame",{Parent=popupLayer,BackgroundColor3=W.Win,Position=UDim2.fromOffset(absPos.X, absPos.Y + 20),Size=UDim2.fromOffset(absW, popH),BorderSizePixel=0,ZIndex=101})
+					sunken(popup,102)
+					activePopup = popup
 
-				local function build(lst)
-					for _,c in ipairs(opts:GetChildren()) do if c:IsA("TextButton") then c:Destroy() end end
 					for idx,v in ipairs(lst) do
-						local o = mk("TextButton",{Parent=opts,BackgroundColor3=W98.Window,Size=UDim2.new(1,-4,0,16),Position=UDim2.fromOffset(2,(idx-1)*16+2),AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=v,TextColor3=W98.Text,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left,BorderSizePixel=0,ZIndex=opts.ZIndex+1})
-						pad(o,0,0,2,0)
-						o.MouseEnter:Connect(function() o.BackgroundColor3=W98.Select; o.TextColor3=W98.SelectTx end)
-						o.MouseLeave:Connect(function() o.BackgroundColor3=W98.Window; o.TextColor3=W98.Text end)
-						o.MouseButton1Click:Connect(function() dispTx.Text=v;pcall(cb,v);open=false;opts.Visible=false;wrap.Size=UDim2.new(1,0,0,22);wrap.ClipsDescendants=true end)
+						local o = mk("TextButton",{Parent=popup,BackgroundColor3=W.Win,Size=UDim2.new(1,-4,0,itemH),Position=UDim2.fromOffset(2, (idx-1)*itemH + 2),AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=" "..v,TextColor3=W.Tx,TextSize=14,TextXAlignment=Enum.TextXAlignment.Left,BorderSizePixel=0,ZIndex=103})
+						o.MouseEnter:Connect(function() o.BackgroundColor3=W.Sel; o.TextColor3=W.SelTx end)
+						o.MouseLeave:Connect(function() o.BackgroundColor3=W.Win; o.TextColor3=W.Tx end)
+						o.MouseButton1Click:Connect(function() dispTx.Text=v; pcall(cb,v); closePopup() end)
 					end
-				end; build(items)
+				end
 
-				local headHit = mk("TextButton",{Parent=head,BackgroundTransparency=1,Position=UDim2.new(0.38,0,0,0),Size=UDim2.new(0.62,0,1,0),Text="",BorderSizePixel=0,ZIndex=head.ZIndex+3})
-				headHit.MouseButton1Click:Connect(function()
-					open = not open
-					opts.Visible = open
-					if open then
-						wrap.ClipsDescendants = false
-						wrap.Size = UDim2.new(1,0,0,22)
-					else
-						wrap.ClipsDescendants = true
-						wrap.Size = UDim2.new(1,0,0,22)
-					end
-				end)
-				local Fn={}; function Fn:Refresh(nl) build(nl) end; return Fn
+				local open = false
+				local function toggle()
+					if open then closePopup(); open=false; return end
+					open = true
+					buildPopup(items)
+				end
+
+				-- Click on display or arrow opens dropdown
+				local hit = mk("TextButton",{Parent=f,BackgroundTransparency=1,Position=UDim2.new(0.32,0,0,0),Size=UDim2.new(0.68,0,1,0),Text="",BorderSizePixel=0,ZIndex=10})
+				hit.MouseButton1Click:Connect(toggle)
+
+				local Fn = {}
+				function Fn:Refresh(nl)
+					items = nl
+					if open then closePopup(); open=false; buildPopup(nl); open=true end
+				end
+				return Fn
 			end
 
 			function S:NewColorPicker(n,tip,dc,cb) n=n or "Color";dc=dc or Color3.new(1,1,1);cb=cb or function()end
 				local h,s,v = Color3.toHSV(dc); local cpO = false
-				local wrap = mk("Frame",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,22),ClipsDescendants=true,BorderSizePixel=0})
+				local wrap = mk("Frame",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,24),ClipsDescendants=true,BorderSizePixel=0,ZIndex=5})
 
-				local head = mk("Frame",{Parent=wrap,BackgroundTransparency=1,Size=UDim2.new(1,0,0,22),BorderSizePixel=0})
-				mk("TextLabel",{Parent=head,BackgroundTransparency=1,Size=UDim2.new(1,-30,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W98.Text,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left})
-				-- Color preview swatch (sunken)
-				local pre = mk("Frame",{Parent=head,BackgroundColor3=dc,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,0,0.5,0),Size=UDim2.fromOffset(22,14),BorderSizePixel=0})
-				border98(pre,"sunken")
+				local head = mk("Frame",{Parent=wrap,BackgroundTransparency=1,Size=UDim2.new(1,0,0,24),BorderSizePixel=0,ZIndex=5})
+				mk("TextLabel",{Parent=head,BackgroundTransparency=1,Size=UDim2.new(1,-30,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=14,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
+				local pre = mk("Frame",{Parent=head,BackgroundColor3=dc,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,0,0.5,0),Size=UDim2.fromOffset(24,16),BorderSizePixel=0,ZIndex=6})
+				sunken(pre,7)
 
-				-- HSV picker area
-				local hi = mk("ImageButton",{Parent=wrap,BackgroundTransparency=1,Position=UDim2.fromOffset(4,26),Size=UDim2.new(0.55,0,0,60),Image="rbxassetid://6523286724"})
-				local hc = mk("Frame",{Parent=hi,Size=UDim2.fromOffset(6,6),BackgroundColor3=W98.DkShadow,BorderSizePixel=0,AnchorPoint=Vector2.new(0.5,0.5)})
-				border98(hc,"raised")
-				local vi = mk("ImageButton",{Parent=wrap,BackgroundTransparency=1,Position=UDim2.new(0.58,4,0,26),Size=UDim2.fromOffset(12,60),Image="rbxassetid://6523291212"})
-				local vc = mk("Frame",{Parent=vi,Size=UDim2.fromOffset(12,3),BackgroundColor3=W98.DkShadow,BorderSizePixel=0,AnchorPoint=Vector2.new(0.5,0)})
+				-- Hue/Sat picker
+				local hi = mk("ImageButton",{Parent=wrap,BackgroundTransparency=1,Position=UDim2.fromOffset(4,28),Size=UDim2.new(0.55,0,0,70),Image="rbxassetid://6523286724",ZIndex=6})
+				local hc = mk("Frame",{Parent=hi,Size=UDim2.fromOffset(8,8),BackgroundColor3=W.Dk,BorderSizePixel=0,AnchorPoint=Vector2.new(0.5,0.5),ZIndex=7})
+				-- Value picker
+				local vi = mk("ImageButton",{Parent=wrap,BackgroundTransparency=1,Position=UDim2.new(0.58,4,0,28),Size=UDim2.fromOffset(14,70),Image="rbxassetid://6523291212",ZIndex=6})
+				local vc = mk("Frame",{Parent=vi,Size=UDim2.fromOffset(14,4),BackgroundColor3=W.Dk,BorderSizePixel=0,AnchorPoint=Vector2.new(0.5,0),ZIndex=7})
 
 				local pH,pV = false,false
 				local function ref()
@@ -392,15 +379,15 @@ function Kavo.CreateLib(title, _themeIn)
 					if pV then v=1-cl((Mouse.Y-vi.AbsolutePosition.Y)/vi.AbsoluteSize.Y,0,1);ref() end
 				end)
 
-				local headHit = mk("TextButton",{Parent=head,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Text="",BorderSizePixel=0,ZIndex=head.ZIndex+3})
+				local headHit = mk("TextButton",{Parent=head,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Text="",BorderSizePixel=0,ZIndex=9})
 				headHit.MouseButton1Click:Connect(function()
 					cpO = not cpO
-					wrap.Size = UDim2.new(1,0,0, cpO and 92 or 22)
+					wrap.Size = UDim2.new(1,0,0, cpO and 104 or 24)
 				end)
 			end
 
 			function S:NewLabel(txt)
-				local l = mk("TextLabel",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,16),Font=Enum.Font.SourceSans,Text=txt or "",RichText=true,TextColor3=W98.Text,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left,BorderSizePixel=0})
+				local l = mk("TextLabel",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,18),Font=Enum.Font.SourceSans,Text=txt or "",RichText=true,TextColor3=W.Tx,TextSize=14,TextXAlignment=Enum.TextXAlignment.Left,BorderSizePixel=0,ZIndex=6})
 				local Fn={}; function Fn:UpdateLabel(t) l.Text=t end; return Fn
 			end
 
@@ -408,7 +395,7 @@ function Kavo.CreateLib(title, _themeIn)
 		end
 		return Tab
 	end
-	return W
+	return Lib
 end
 
 return Kavo
