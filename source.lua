@@ -96,6 +96,7 @@ function Kavo.CreateLib(title,themeIn)
 
 	-- Content area
 	local content=mk("Frame",{Parent=main,BackgroundColor3=C.Bg,Position=UDim2.fromOffset(130,32),Size=UDim2.new(1,-130,1,-32),BorderSizePixel=0})
+	corner(content,R); mk("Frame",{Parent=content,BackgroundColor3=C.Bg,Size=UDim2.new(1,0,0,R),BorderSizePixel=0}); mk("Frame",{Parent=content,BackgroundColor3=C.Bg,Size=UDim2.new(0,R,1,0),BorderSizePixel=0})
 
 	-- Notification
 	local nHolder=mk("Frame",{Parent=gui,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0),Position=UDim2.new(1,-16,0,16),Size=UDim2.fromOffset(260,400)})
