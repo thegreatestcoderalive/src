@@ -75,7 +75,7 @@ function Kavo.CreateLib(title,themeIn)
 
 	-- Main window
 	local main=mk("Frame",{Name="Main",Parent=gui,BackgroundColor3=C.Bg,ClipsDescendants=true,Position=UDim2.new(0.5,-260,0.5,-170),Size=UDim2.fromOffset(520,340),BorderSizePixel=0})
-	corner(main,14)
+	corner(main,20)
 
 	-- Header
 	local hdr=mk("Frame",{Parent=main,BackgroundColor3=C.Hd,Size=UDim2.new(1,0,0,32),BorderSizePixel=0})
@@ -112,7 +112,7 @@ function Kavo.CreateLib(title,themeIn)
 	function W:NewTab(name)
 		name=name or "Tab"
 		local btn=mk("TextButton",{Parent=tabs,BackgroundColor3=C.Sc,BackgroundTransparency=1,Size=UDim2.new(1,0,0,28),AutoButtonColor=false,Font=Enum.Font.SourceSansBold,Text=name,TextColor3=sh(C.Tx,-50),TextSize=14,BorderSizePixel=0})
-		corner(btn,8)
+		corner(btn,10)
 
 		local pg=mk("ScrollingFrame",{Parent=content,BackgroundColor3=C.Bg,BackgroundTransparency=0,Size=UDim2.new(1,0,1,0),ScrollBarThickness=2,ScrollBarImageColor3=sh(C.Sc,-30),BorderSizePixel=0,Visible=false,CanvasSize=UDim2.fromOffset(0,0)})
 		local pgLay=list(pg,5); pad(pg,8,8,10,10); scrollFit(pg,pgLay)
@@ -133,7 +133,7 @@ function Kavo.CreateLib(title,themeIn)
 			pad(hdr,0,0,4,0)
 
 			local box=mk("Frame",{Parent=pg,BackgroundColor3=C.El,Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y,BorderSizePixel=0})
-			corner(box,8)
+			corner(box,10)
 			local inner=mk("Frame",{Parent=box,BackgroundTransparency=1,Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y})
 			local il=list(inner,2); pad(inner,4,4,4,4)
 
@@ -142,7 +142,7 @@ function Kavo.CreateLib(title,themeIn)
 
 			local function row()
 				local f=mk("TextButton",{Parent=inner,BackgroundColor3=C.El,Size=UDim2.new(1,0,0,32),AutoButtonColor=false,Text="",BorderSizePixel=0})
-				corner(f,6)
+				corner(f,8)
 				f.MouseEnter:Connect(function() tw(f,{BackgroundColor3=sh(C.El,8)},0.1) end)
 				f.MouseLeave:Connect(function() tw(f,{BackgroundColor3=C.El},0.1) end)
 				return f
