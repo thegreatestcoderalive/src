@@ -74,29 +74,25 @@ function Kavo.CreateLib(title,themeIn)
 	local gui=mk("ScreenGui",{Name=LID,Parent=game.CoreGui,ZIndexBehavior=Enum.ZIndexBehavior.Sibling,ResetOnSpawn=false})
 
 	-- Main window
-	local R=10
 	local main=mk("Frame",{Name="Main",Parent=gui,BackgroundColor3=C.Bg,ClipsDescendants=true,Position=UDim2.new(0.5,-260,0.5,-170),Size=UDim2.fromOffset(520,340),BorderSizePixel=0})
-	corner(main,R)
+	corner(main,10)
 
 	-- Header
 	local hdr=mk("Frame",{Parent=main,BackgroundColor3=C.Hd,Size=UDim2.new(1,0,0,32),BorderSizePixel=0})
-	corner(hdr,R); mk("Frame",{Parent=hdr,BackgroundColor3=C.Hd,Position=UDim2.new(0,0,1,-R),Size=UDim2.new(1,0,0,R),BorderSizePixel=0})
 	drag(hdr,main)
 	mk("TextLabel",{Parent=hdr,BackgroundTransparency=1,Position=UDim2.fromOffset(12,0),Size=UDim2.new(1,-44,1,0),Font=Enum.Font.SourceSansBold,Text=title,RichText=true,TextColor3=C.Tx,TextSize=16,TextXAlignment=Enum.TextXAlignment.Left,TextStrokeColor3=Color3.new(0,0,0),TextStrokeTransparency=0.5})
-	local cls=mk("TextButton",{Parent=hdr,BackgroundTransparency=1,Position=UDim2.new(1,-32,0,0),Size=UDim2.fromOffset(32,32),Font=Enum.Font.SourceSansBold,Text="×",TextColor3=sh(C.Tx,-80),TextSize=20,AutoButtonColor=false})
+	local cls=mk("TextButton",{Parent=hdr,BackgroundTransparency=1,Position=UDim2.new(1,-32,0,0),Size=UDim2.fromOffset(32,32),Font=Enum.Font.SourceSansBold,Text="x",TextColor3=sh(C.Tx,-80),TextSize=16,AutoButtonColor=false})
 	cls.MouseEnter:Connect(function() tw(cls,{TextColor3=Color3.fromRGB(220,50,50)}) end)
 	cls.MouseLeave:Connect(function() tw(cls,{TextColor3=sh(C.Tx,-80)}) end)
 	cls.MouseButton1Click:Connect(function() gui:Destroy() end)
 
 	-- Sidebar
 	local side=mk("Frame",{Parent=main,BackgroundColor3=C.Hd,Position=UDim2.fromOffset(0,32),Size=UDim2.new(0,130,1,-32),BorderSizePixel=0})
-	corner(side,R); mk("Frame",{Parent=side,BackgroundColor3=C.Hd,Position=UDim2.new(1,-R,0,0),Size=UDim2.new(0,R,1,0),BorderSizePixel=0}); mk("Frame",{Parent=side,BackgroundColor3=C.Hd,Size=UDim2.new(1,0,0,R),BorderSizePixel=0})
 	local tabs=mk("ScrollingFrame",{Parent=side,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),ScrollBarThickness=0,BorderSizePixel=0,CanvasSize=UDim2.fromOffset(0,0)})
 	local tabLay=list(tabs,2); pad(tabs,6,6,6,6); scrollFit(tabs,tabLay)
 
-	-- Content area
-	local content=mk("Frame",{Parent=main,BackgroundColor3=C.Bg,Position=UDim2.fromOffset(130,32),Size=UDim2.new(1,-130,1,-32),BorderSizePixel=0})
-	corner(content,R); mk("Frame",{Parent=content,BackgroundColor3=C.Bg,Size=UDim2.new(1,0,0,R),BorderSizePixel=0}); mk("Frame",{Parent=content,BackgroundColor3=C.Bg,Size=UDim2.new(0,R,1,0),BorderSizePixel=0})
+	-- Content
+	local content=mk("Frame",{Parent=main,BackgroundTransparency=1,Position=UDim2.fromOffset(130,32),Size=UDim2.new(1,-130,1,-32),BorderSizePixel=0})
 
 	-- Notification
 	local nHolder=mk("Frame",{Parent=gui,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0),Position=UDim2.new(1,-16,0,16),Size=UDim2.fromOffset(260,400)})
