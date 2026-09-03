@@ -1,4 +1,4 @@
---// Kavo UI Library â€” Clean, working, no over-engineering
+﻿--// Kavo UI Library - Clean, working, no over-engineering
 local Kavo = {}
 local TS = game:GetService("TweenService")
 local UIS = game:GetService("UserInputService")
@@ -179,7 +179,7 @@ function Kavo.CreateLib(title,themeIn)
 
 			function S:NewKeybind(n,tip,dk,cb) n=n or "Keybind";cb=cb or function()end; local key=dk
 				local f=row(); label(f,n)
-				local kl=mk("TextLabel",{Parent=f,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,-10,0.5,0),Size=UDim2.fromOffset(60,20),Font=Enum.Font.SourceSansBold,Text=key and key.Name or "â€”",TextColor3=C.Sc,TextSize=13,TextXAlignment=Enum.TextXAlignment.Right})
+				local kl=mk("TextLabel",{Parent=f,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,-10,0.5,0),Size=UDim2.fromOffset(60,20),Font=Enum.Font.SourceSansBold,Text=key and key.Name or "-",TextColor3=C.Sc,TextSize=13,TextXAlignment=Enum.TextXAlignment.Right})
 				local listening=false
 				f.MouseButton1Click:Connect(function() if listening then return end; listening=true;kl.Text="..."; local i=UIS.InputBegan:Wait(); if i.KeyCode~=Enum.KeyCode.Unknown then key=i.KeyCode;kl.Text=key.Name end; listening=false end)
 				UIS.InputBegan:Connect(function(i,g) if not g and key and i.KeyCode==key then pcall(cb) end end)
