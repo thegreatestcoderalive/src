@@ -1,4 +1,4 @@
-﻿--// Kavo UI Library - Clean, working, no over-engineering
+--// Kavo UI Library - Clean, working, no over-engineering
 local Kavo = {}
 local TS = game:GetService("TweenService")
 local UIS = game:GetService("UserInputService")
@@ -99,7 +99,7 @@ function Kavo.CreateLib(title,themeIn)
 	function Kavo:Notify(cfg)
 		cfg=cfg or {}
 		local n=mk("Frame",{Parent=nHolder,BackgroundColor3=sh(C.Bg,10),Size=UDim2.new(1,0,0,50),BorderSizePixel=0})
-				mk("TextLabel",{Parent=n,BackgroundTransparency=1,Position=UDim2.fromOffset(10,6),Size=UDim2.new(1,-20,0,16),Font=Enum.Font.SourceSansBold,Text=cfg.Title or "Notice",TextColor3=C.Sc,TextSize=14,TextXAlignment=Enum.TextXAlignment.Left})
+		mk("TextLabel",{Parent=n,BackgroundTransparency=1,Position=UDim2.fromOffset(10,6),Size=UDim2.new(1,-20,0,16),Font=Enum.Font.SourceSansBold,Text=cfg.Title or "Notice",TextColor3=C.Sc,TextSize=14,TextXAlignment=Enum.TextXAlignment.Left})
 		mk("TextLabel",{Parent=n,BackgroundTransparency=1,Position=UDim2.fromOffset(10,24),Size=UDim2.new(1,-20,0,20),Font=Enum.Font.SourceSans,Text=cfg.Text or "",TextColor3=sh(C.Tx,-20),TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,TextWrapped=true})
 		task.delay(cfg.Duration or 4,function() tw(n,{BackgroundTransparency=1},0.2); for _,c in ipairs(n:GetChildren()) do pcall(function() tw(c,{TextTransparency=1},0.2) end) end; task.delay(0.25,n.Destroy,n) end)
 	end
@@ -129,7 +129,7 @@ function Kavo.CreateLib(title,themeIn)
 			pad(hdr,0,0,4,0)
 
 			local box=mk("Frame",{Parent=pg,BackgroundColor3=C.El,Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y,BorderSizePixel=0})
-						local inner=mk("Frame",{Parent=box,BackgroundTransparency=1,Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y})
+			local inner=mk("Frame",{Parent=box,BackgroundTransparency=1,Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y})
 			local il=list(inner,2); pad(inner,4,4,4,4)
 
 			local S={}
@@ -137,7 +137,7 @@ function Kavo.CreateLib(title,themeIn)
 
 			local function row()
 				local f=mk("TextButton",{Parent=inner,BackgroundColor3=C.El,Size=UDim2.new(1,0,0,32),AutoButtonColor=false,Text="",BorderSizePixel=0})
-								f.MouseEnter:Connect(function() tw(f,{BackgroundColor3=sh(C.El,20)},0.1) end)
+				f.MouseEnter:Connect(function() tw(f,{BackgroundColor3=sh(C.El,20)},0.1) end)
 				f.MouseLeave:Connect(function() tw(f,{BackgroundColor3=C.El},0.1) end)
 				return f
 			end
