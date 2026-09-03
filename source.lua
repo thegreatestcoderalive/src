@@ -74,11 +74,13 @@ function Kavo.CreateLib(title,themeIn)
 	local gui=mk("ScreenGui",{Name=LID,Parent=game.CoreGui,ZIndexBehavior=Enum.ZIndexBehavior.Sibling,ResetOnSpawn=false})
 
 	-- Main window
+	local R=10
 	local main=mk("Frame",{Name="Main",Parent=gui,BackgroundColor3=C.Bg,ClipsDescendants=true,Position=UDim2.new(0.5,-260,0.5,-170),Size=UDim2.fromOffset(520,340),BorderSizePixel=0})
-	corner(main,10)
+	corner(main,R)
 
 	-- Header
 	local hdr=mk("Frame",{Parent=main,BackgroundColor3=C.Hd,Size=UDim2.new(1,0,0,32),BorderSizePixel=0})
+	corner(hdr,R); mk("Frame",{Parent=hdr,BackgroundColor3=C.Hd,Position=UDim2.new(0,0,1,-R),Size=UDim2.new(1,0,0,R),BorderSizePixel=0})
 	drag(hdr,main)
 	mk("TextLabel",{Parent=hdr,BackgroundTransparency=1,Position=UDim2.fromOffset(12,0),Size=UDim2.new(1,-44,1,0),Font=Enum.Font.SourceSansBold,Text=title,RichText=true,TextColor3=C.Tx,TextSize=16,TextXAlignment=Enum.TextXAlignment.Left,TextStrokeColor3=Color3.new(0,0,0),TextStrokeTransparency=0.5})
 	local cls=mk("TextButton",{Parent=hdr,BackgroundTransparency=1,Position=UDim2.new(1,-32,0,0),Size=UDim2.fromOffset(32,32),Font=Enum.Font.SourceSansBold,Text="×",TextColor3=sh(C.Tx,-80),TextSize=20,AutoButtonColor=false})
@@ -88,6 +90,7 @@ function Kavo.CreateLib(title,themeIn)
 
 	-- Sidebar
 	local side=mk("Frame",{Parent=main,BackgroundColor3=C.Hd,Position=UDim2.fromOffset(0,32),Size=UDim2.new(0,130,1,-32),BorderSizePixel=0})
+	corner(side,R); mk("Frame",{Parent=side,BackgroundColor3=C.Hd,Position=UDim2.new(1,-R,0,0),Size=UDim2.new(0,R,1,0),BorderSizePixel=0}); mk("Frame",{Parent=side,BackgroundColor3=C.Hd,Size=UDim2.new(1,0,0,R),BorderSizePixel=0})
 	local tabs=mk("ScrollingFrame",{Parent=side,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),ScrollBarThickness=0,BorderSizePixel=0,CanvasSize=UDim2.fromOffset(0,0)})
 	local tabLay=list(tabs,2); pad(tabs,6,6,6,6); scrollFit(tabs,tabLay)
 
@@ -143,7 +146,7 @@ function Kavo.CreateLib(title,themeIn)
 			local function row()
 				local f=mk("TextButton",{Parent=inner,BackgroundColor3=C.El,Size=UDim2.new(1,0,0,32),AutoButtonColor=false,Text="",BorderSizePixel=0})
 				corner(f,8)
-				f.MouseEnter:Connect(function() tw(f,{BackgroundColor3=sh(C.El,8)},0.1) end)
+				f.MouseEnter:Connect(function() tw(f,{BackgroundColor3=sh(C.El,20)},0.1) end)
 				f.MouseLeave:Connect(function() tw(f,{BackgroundColor3=C.El},0.1) end)
 				return f
 			end
@@ -194,7 +197,7 @@ function Kavo.CreateLib(title,themeIn)
 			function S:NewDropdown(n,tip,items,cb) n=n or "Select";items=items or {};cb=cb or function()end; local open=false
 				local wrap=mk("Frame",{Parent=inner,BackgroundColor3=C.El,Size=UDim2.new(1,0,0,32),ClipsDescendants=true,BorderSizePixel=0}); corner(wrap,8)
 				local head=mk("TextButton",{Parent=wrap,BackgroundTransparency=1,Size=UDim2.new(1,0,0,32),AutoButtonColor=false,Text="",BorderSizePixel=0})
-				head.MouseEnter:Connect(function() tw(wrap,{BackgroundColor3=sh(C.El,8)},0.1) end)
+				head.MouseEnter:Connect(function() tw(wrap,{BackgroundColor3=sh(C.El,20)},0.1) end)
 				head.MouseLeave:Connect(function() tw(wrap,{BackgroundColor3=C.El},0.1) end)
 				local hl=mk("TextLabel",{Parent=head,BackgroundTransparency=1,Position=UDim2.fromOffset(10,0),Size=UDim2.new(1,-30,1,0),Font=Enum.Font.SourceSansBold,Text=n,TextColor3=C.Tx,TextSize=14,TextXAlignment=Enum.TextXAlignment.Left,TextStrokeColor3=Color3.new(0,0,0),TextStrokeTransparency=0.5})
 				local arr=mk("TextLabel",{Parent=head,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,-10,0.5,0),Size=UDim2.fromOffset(16,16),Font=Enum.Font.SourceSansBold,Text="v",TextColor3=sh(C.Tx,-60),TextSize=14})
@@ -204,7 +207,7 @@ function Kavo.CreateLib(title,themeIn)
 					for _,c in ipairs(opts:GetChildren()) do if c:IsA("TextButton") then c:Destroy() end end
 					for _,v in ipairs(lst) do
 						local o=mk("TextButton",{Parent=opts,BackgroundColor3=sh(C.El,4),Size=UDim2.new(1,0,0,26),AutoButtonColor=false,Font=Enum.Font.SourceSans,Text="  "..v,TextColor3=sh(C.Tx,-10),TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,BorderSizePixel=0}); corner(o,6)
-						o.MouseEnter:Connect(function() tw(o,{BackgroundColor3=sh(C.El,12)},0.08) end)
+						o.MouseEnter:Connect(function() tw(o,{BackgroundColor3=sh(C.El,24)},0.08) end)
 						o.MouseLeave:Connect(function() tw(o,{BackgroundColor3=sh(C.El,4)},0.08) end)
 						o.MouseButton1Click:Connect(function() hl.Text=v;pcall(cb,v);open=false;tw(wrap,{Size=UDim2.new(1,0,0,32)});arr.Text="v" end)
 					end
