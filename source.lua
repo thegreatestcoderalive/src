@@ -74,8 +74,7 @@ function Kavo.CreateLib(title,themeIn)
 	local gui=mk("ScreenGui",{Name=LID,Parent=game.CoreGui,ZIndexBehavior=Enum.ZIndexBehavior.Sibling,ResetOnSpawn=false})
 
 	-- Main window
-	local main=mk("CanvasGroup",{Name="Main",Parent=gui,BackgroundColor3=C.Bg,Position=UDim2.new(0.5,-260,0.5,-170),Size=UDim2.fromOffset(520,340),BorderSizePixel=0})
-	corner(main,10)
+	local main=mk("Frame",{Name="Main",Parent=gui,BackgroundColor3=C.Bg,ClipsDescendants=true,Position=UDim2.new(0.5,-260,0.5,-170),Size=UDim2.fromOffset(520,340),BorderSizePixel=0})
 
 	-- Header
 	local hdr=mk("Frame",{Parent=main,BackgroundColor3=C.Hd,Size=UDim2.new(1,0,0,32),BorderSizePixel=0})
