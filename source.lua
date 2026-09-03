@@ -75,7 +75,7 @@ function Kavo.CreateLib(title,themeIn)
 
 	-- Main window
 	local main=mk("Frame",{Name="Main",Parent=gui,BackgroundColor3=C.Bg,ClipsDescendants=true,Position=UDim2.new(0.5,-260,0.5,-170),Size=UDim2.fromOffset(520,340),BorderSizePixel=0})
-	corner(main,8)
+	corner(main,12)
 	mk("UIStroke",{Parent=main,Color=sh(C.Hd,12),Thickness=1,Transparency=0.5})
 
 	-- Header
@@ -96,17 +96,17 @@ function Kavo.CreateLib(title,themeIn)
 	local content=mk("Frame",{Parent=main,BackgroundColor3=C.Bg,Position=UDim2.fromOffset(130,32),Size=UDim2.new(1,-130,1,-32),BorderSizePixel=0})
 
 	-- Notification
-	local nHolder=mk("Frame",{Parent=gui,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,1),Position=UDim2.new(1,-16,1,-16),Size=UDim2.fromOffset(260,400)})
-	local nLay=list(nHolder,6); nLay.VerticalAlignment=Enum.VerticalAlignment.Bottom
+	local nHolder=mk("Frame",{Parent=gui,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0),Position=UDim2.new(1,-16,0,16),Size=UDim2.fromOffset(260,400)})
+	local nLay=list(nHolder,6)
 
 	function Kavo:Notify(cfg)
 		cfg=cfg or {}
-		local n=mk("Frame",{Parent=nHolder,BackgroundColor3=C.Hd,Size=UDim2.new(1,0,0,0),ClipsDescendants=true,BorderSizePixel=0})
-		corner(n,8); mk("UIStroke",{Parent=n,Color=C.Sc,Thickness=1,Transparency=0.6})
-		local nt=mk("TextLabel",{Parent=n,BackgroundTransparency=1,Position=UDim2.fromOffset(10,8),Size=UDim2.new(1,-20,0,14),Font=Enum.Font.GothamBold,Text=cfg.Title or "Notice",TextColor3=C.Sc,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left})
-		local nb=mk("TextLabel",{Parent=n,BackgroundTransparency=1,Position=UDim2.fromOffset(10,24),Size=UDim2.new(1,-20,0,24),Font=Enum.Font.Gotham,Text=cfg.Text or "",TextColor3=sh(C.Tx,-20),TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,TextWrapped=true})
-		tw(n,{Size=UDim2.new(1,0,0,54)},0.3)
-		task.delay(cfg.Duration or 4,function() tw(n,{Size=UDim2.new(1,0,0,0)},0.2); task.delay(0.25,n.Destroy,n) end)
+		local n=mk("Frame",{Parent=nHolder,BackgroundColor3=C.Hd,Size=UDim2.new(1,0,0,54),Position=UDim2.new(1,10,0,0),ClipsDescendants=true,BorderSizePixel=0})
+		corner(n,10); mk("UIStroke",{Parent=n,Color=C.Sc,Thickness=1,Transparency=0.6})
+		mk("TextLabel",{Parent=n,BackgroundTransparency=1,Position=UDim2.fromOffset(10,8),Size=UDim2.new(1,-20,0,14),Font=Enum.Font.GothamBold,Text=cfg.Title or "Notice",TextColor3=C.Sc,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left})
+		mk("TextLabel",{Parent=n,BackgroundTransparency=1,Position=UDim2.fromOffset(10,24),Size=UDim2.new(1,-20,0,24),Font=Enum.Font.GothamSemibold,Text=cfg.Text or "",TextColor3=sh(C.Tx,-20),TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,TextWrapped=true})
+		tw(n,{Position=UDim2.new(0,0,0,0)},0.35)
+		task.delay(cfg.Duration or 4,function() tw(n,{Position=UDim2.new(1,10,0,0)},0.3); task.delay(0.35,n.Destroy,n) end)
 	end
 
 	local W={}; local first=true
@@ -114,7 +114,7 @@ function Kavo.CreateLib(title,themeIn)
 	function W:NewTab(name)
 		name=name or "Tab"
 		local btn=mk("TextButton",{Parent=tabs,BackgroundColor3=C.Sc,BackgroundTransparency=1,Size=UDim2.new(1,0,0,28),AutoButtonColor=false,Font=Enum.Font.GothamSemibold,Text=name,TextColor3=sh(C.Tx,-50),TextSize=12,BorderSizePixel=0})
-		corner(btn,6)
+		corner(btn,8)
 
 		local pg=mk("ScrollingFrame",{Parent=content,BackgroundColor3=C.Bg,BackgroundTransparency=0,Size=UDim2.new(1,0,1,0),ScrollBarThickness=2,ScrollBarImageColor3=sh(C.Sc,-30),BorderSizePixel=0,Visible=false,CanvasSize=UDim2.fromOffset(0,0)})
 		local pgLay=list(pg,5); pad(pg,8,8,10,10); scrollFit(pg,pgLay)
@@ -135,7 +135,7 @@ function Kavo.CreateLib(title,themeIn)
 			pad(hdr,0,0,4,0)
 
 			local box=mk("Frame",{Parent=pg,BackgroundColor3=C.El,Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y,BorderSizePixel=0})
-			corner(box,6)
+			corner(box,8)
 			local inner=mk("Frame",{Parent=box,BackgroundTransparency=1,Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y})
 			local il=list(inner,2); pad(inner,4,4,4,4)
 
@@ -144,7 +144,7 @@ function Kavo.CreateLib(title,themeIn)
 
 			local function row()
 				local f=mk("TextButton",{Parent=inner,BackgroundColor3=C.El,Size=UDim2.new(1,0,0,32),AutoButtonColor=false,Text="",BorderSizePixel=0})
-				corner(f,4)
+				corner(f,6)
 				f.MouseEnter:Connect(function() tw(f,{BackgroundColor3=sh(C.El,8)},0.1) end)
 				f.MouseLeave:Connect(function() tw(f,{BackgroundColor3=C.El},0.1) end)
 				return f
