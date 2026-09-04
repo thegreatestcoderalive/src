@@ -102,8 +102,8 @@ end
 
 -- Win98 title bar button
 local function titleBtn(parent, glyph, onClick)
-	local b = mk("TextButton",{Parent=parent,BackgroundColor3=W.Face,Size=UDim2.fromOffset(16,14),AutoButtonColor=false,Font=Enum.Font.RobotoMono,Text=glyph,TextColor3=W.Tx,TextSize=10,BorderSizePixel=0})
-	raised(b)
+	local b = mk("TextButton",{Parent=parent,BackgroundColor3=W.Face,Size=UDim2.fromOffset(16,14),AutoButtonColor=false,Font=Enum.Font.RobotoMono,Text=glyph,TextColor3=W.Tx,TextSize=10,BorderSizePixel=0,ZIndex=5})
+	raised(b,6)
 	b.MouseButton1Down:Connect(function() pressBorder(b) end)
 	b.MouseButton1Up:Connect(function() releaseBorder(b) end)
 	if onClick then b.MouseButton1Click:Connect(onClick) end
@@ -146,10 +146,10 @@ function Kavo.CreateLib(title, _themeIn)
 	-- 98.css: .title-bar-text { font-weight:700, letter-spacing:0, color:#fff }
 	mk("TextLabel",{Parent=hdr,BackgroundTransparency=1,Position=UDim2.fromOffset(3,0),Size=UDim2.new(1,-58,1,0),Font=Enum.Font.SourceSansBold,Text=title,RichText=true,TextColor3=W.TitTx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=4})
 
-	-- Title buttons
-	local btnBar = mk("Frame",{Parent=hdr,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,-2,0.5,0),Size=UDim2.fromOffset(54,14),ZIndex=4})
+	-- Title buttons — ZIndex must beat header(3) and title text(4)
+	local btnBar = mk("Frame",{Parent=hdr,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,-2,0.5,0),Size=UDim2.fromOffset(54,14),ZIndex=5})
 	list(btnBar,2,Enum.FillDirection.Horizontal)
-	titleBtn(btnBar,"_",nil)
+	titleBtn(btnBar,"_",function() main.Visible=not main.Visible end)
 	titleBtn(btnBar,"□",nil)
 	titleBtn(btnBar,"×",function() gui:Destroy() end)
 
@@ -202,8 +202,8 @@ function Kavo.CreateLib(title, _themeIn)
 		name = name or "Tab"
 
 		-- 98.css --border-tab: no bottom, top-left/right radius 3px
-		local btn = mk("TextButton",{Parent=tabRow,BackgroundColor3=W.Face,Size=UDim2.new(0,0,0,24),AutomaticSize=Enum.AutomaticSize.X,AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=name,TextColor3=W.Tx,TextSize=12,BorderSizePixel=0,ZIndex=5})
-		pad(btn,3,3,6,6)
+		local btn = mk("TextButton",{Parent=tabRow,BackgroundColor3=W.Face,Size=UDim2.new(0,0,0,24),AutomaticSize=Enum.AutomaticSize.X,AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=name,TextColor3=W.Tx,TextSize=12,BorderSizePixel=0,ZIndex=5,ClipsDescendants=false})
+		pad(btn,3,3,8,8)
 
 		-- Left: Hi outer, BtnF inner
 		mk("Frame",{Name="TLeftOuter",Parent=btn,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(),ZIndex=6})
