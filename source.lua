@@ -153,11 +153,13 @@ function Kavo.CreateLib(title, _themeIn)
 	titleBtn(btnBar,"□",nil)
 	titleBtn(btnBar,"×",function() gui:Destroy() end)
 
-	-- Tab row — 98.css: menu[role=tablist] { margin: 0 0 -2px; padding-left: 3px }
-	local tabRow = mk("Frame",{Parent=main,BackgroundTransparency=1,Position=UDim2.fromOffset(6,24),Size=UDim2.new(1,-9,0,24),BorderSizePixel=0,ZIndex=3})
-	list(tabRow,0,Enum.FillDirection.Horizontal)
+	-- Tab row — 98.css: menu[role=tablist] { margin:0 0 -2px; padding-left:3px }
+	-- Sits flush with content X, tabs overlap content top by 2px
+	local tabRow = mk("Frame",{Parent=main,BackgroundTransparency=1,Position=UDim2.fromOffset(3,24),Size=UDim2.new(1,-6,0,24),BorderSizePixel=0,ZIndex=3})
+	local tabLay = list(tabRow,0,Enum.FillDirection.Horizontal)
+	pad(tabRow,0,0,3,0) -- padding-left:3px per 98.css
 
-	-- Content well (sunken) — tab panel sits below tab row, tabs overlap by 2px
+	-- Content well — top lines up so active tabs (26px from Y=22) overlap 2px into border
 	local content = mk("Frame",{Parent=main,BackgroundColor3=W.Face,Position=UDim2.fromOffset(3,46),Size=UDim2.new(1,-6,1,-68),BorderSizePixel=0,ZIndex=3})
 	sunken(content,4)
 
@@ -199,31 +201,25 @@ function Kavo.CreateLib(title, _themeIn)
 	function Lib:NewTab(name)
 		name = name or "Tab"
 
-		-- 98.css tab: border-top-left-radius:3px, border-top-right-radius:3px
-		-- box-shadow: inset -1px 0 window-frame, inset 1px 1px button-face,
-		--             inset -2px 0 button-shadow, inset 2px 2px button-highlight
-		-- (NO bottom border — tabs are open at the bottom)
-		local btn = mk("TextButton",{Parent=tabRow,BackgroundColor3=W.Face,Size=UDim2.new(0,0,0,24),AutomaticSize=Enum.AutomaticSize.X,AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=name,TextColor3=W.Tx,TextSize=11,BorderSizePixel=0,ZIndex=5})
-		pad(btn,4,4,6,6)
+		-- 98.css --border-tab: no bottom, top-left/right radius 3px
+		local btn = mk("TextButton",{Parent=tabRow,BackgroundColor3=W.Face,Size=UDim2.new(0,0,0,24),AutomaticSize=Enum.AutomaticSize.X,AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=name,TextColor3=W.Tx,TextSize=12,BorderSizePixel=0,ZIndex=5})
+		pad(btn,3,3,6,6)
 
-		-- Outer left: 1px button-highlight (Hi)
+		-- Left: Hi outer, BtnF inner
 		mk("Frame",{Name="TLeftOuter",Parent=btn,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(),ZIndex=6})
-		-- Inner left: 1px button-face (BtnF) at x=1
 		mk("Frame",{Name="TLeftInner",Parent=btn,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(0,1,1,-1),Position=UDim2.fromOffset(1,1),ZIndex=6})
-		-- Outer top: 1px button-highlight (Hi) — starts at x=2 to avoid corner
+		-- Top: Hi outer, BtnF inner
 		mk("Frame",{Name="TTopOuter",Parent=btn,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.fromOffset(1,0),ZIndex=6})
-		-- Inner top: 1px button-face (BtnF) at y=1
 		mk("Frame",{Name="TTopInner",Parent=btn,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(1,-4,0,1),Position=UDim2.fromOffset(2,1),ZIndex=6})
-		-- Outer right: 1px window-frame (Dk)
+		-- Right: Dk outer, Sha inner
 		mk("Frame",{Name="TRightOuter",Parent=btn,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,-1,0,0),ZIndex=6})
-		-- Inner right: 1px button-shadow (Sha)
 		mk("Frame",{Name="TRightInner",Parent=btn,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(0,1,1,-1),Position=UDim2.new(1,-2,0,1),ZIndex=6})
-		-- Bottom cover — hides content border when this tab is active
-		local btm = mk("Frame",{Name="TabBottom",Parent=btn,BackgroundColor3=W.Face,BorderSizePixel=0,Size=UDim2.new(1,-2,0,2),Position=UDim2.new(0,1,1,-2),ZIndex=7})
+		-- Bottom cover: extends 4px past btn bottom to fully mask the 2px content border
+		local btm = mk("Frame",{Name="TabBottom",Parent=btn,BackgroundColor3=W.Face,BorderSizePixel=0,Size=UDim2.new(1,-2,0,4),Position=UDim2.new(0,1,1,-2),ZIndex=10})
 
-		-- Page
+		-- Page — 98.css .window-body { margin:8px }
 		local pg = mk("ScrollingFrame",{Parent=content,BackgroundColor3=W.Face,BackgroundTransparency=0,Size=UDim2.new(1,-4,1,-4),Position=UDim2.fromOffset(2,2),ScrollBarThickness=16,ScrollBarImageColor3=W.BtnF,BorderSizePixel=0,Visible=false,CanvasSize=UDim2.fromOffset(0,0),ZIndex=5})
-		local pgLay = list(pg,6); pad(pg,8,8,10,10); scrollFit(pg,pgLay)
+		local pgLay = list(pg,4); pad(pg,6,6,8,8); scrollFit(pg,pgLay)
 
 		-- 98.css: selected tab gets margin-top:-2px, padding-bottom:2px, z-index:8
 		local function activate()
@@ -256,15 +252,16 @@ function Kavo.CreateLib(title, _themeIn)
 		function Tab:NewSection(secName)
 			secName = secName or "Section"
 
+			-- 98.css fieldset: padding 10px, padding-block-start 8px
 			local box = mk("Frame",{Parent=pg,BackgroundColor3=W.Face,Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y,BorderSizePixel=0,ZIndex=5})
-			pad(box,16,8,2,2)
+			pad(box,12,6,2,2)
 			etched(box,6)
 
 			-- Legend on the etched border
-			local legend = mk("TextLabel",{Parent=box,BackgroundColor3=W.Face,Position=UDim2.fromOffset(10,-7),Size=UDim2.new(0,0,0,14),AutomaticSize=Enum.AutomaticSize.X,Font=Enum.Font.SourceSans,Text=" "..secName.." ",RichText=true,TextColor3=W.Tx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,BorderSizePixel=0,ZIndex=7})
+			local legend = mk("TextLabel",{Parent=box,BackgroundColor3=W.Face,Position=UDim2.fromOffset(10,-6),Size=UDim2.new(0,0,0,12),AutomaticSize=Enum.AutomaticSize.X,Font=Enum.Font.SourceSans,Text=" "..secName.." ",RichText=true,TextColor3=W.Tx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,BorderSizePixel=0,ZIndex=7})
 
 			local inner = mk("Frame",{Parent=box,BackgroundTransparency=1,Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y,ZIndex=5})
-			list(inner,4); pad(inner,4,4,10,10)
+			list(inner,4); pad(inner,2,4,8,8)
 
 			local S = {}
 			function S:UpdateSection(t) legend.Text=" "..t.." " end
