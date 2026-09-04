@@ -20,9 +20,9 @@ local function drag(h,t)
 	UIS.InputChanged:Connect(function(i) if d and i.UserInputType==Enum.UserInputType.MouseMovement then local dt=i.Position-ds;t.Position=UDim2.new(fs.X.Scale,fs.X.Offset+dt.X,fs.Y.Scale,fs.Y.Offset+dt.Y) end end)
 end
 
--- Win98 palette — verbatim 98.css variables
+-- 98.css palette
 local W = {
-	Face   = Color3.fromRGB(192,192,192), -- --surface / silver
+	Face   = Color3.fromRGB(192,192,192), -- --surface #c0c0c0
 	BtnF   = Color3.fromRGB(223,223,223), -- --button-face #dfdfdf
 	Hi     = Color3.fromRGB(255,255,255), -- --button-highlight
 	Sha    = Color3.fromRGB(128,128,128), -- --button-shadow
@@ -35,59 +35,51 @@ local W = {
 	SelTx  = Color3.fromRGB(255,255,255),
 }
 
--- 3D borders — verbatim 98.css box-shadow
--- raised-outer: inset -1px -1px window-frame, inset 1px 1px button-highlight
--- raised-inner: inset -2px -2px button-shadow, inset 2px 2px button-face
+-- ponytail: raised/sunken match 98.css 4-layer box-shadow exactly
 local function raised(p,z)
 	z=z or p.ZIndex+1
-	-- outer highlight (top, left = Hi)
 	mk("Frame",{Parent=p,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(),ZIndex=z})
 	mk("Frame",{Parent=p,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(),ZIndex=z})
-	-- outer shadow (bottom, right = Dk/window-frame)
 	mk("Frame",{Parent=p,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,-1),ZIndex=z})
 	mk("Frame",{Parent=p,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,-1,0,0),ZIndex=z})
-	-- inner highlight (top, left = BtnF/button-face)
 	mk("Frame",{Parent=p,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.fromOffset(1,1),ZIndex=z})
 	mk("Frame",{Parent=p,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(0,1,1,-2),Position=UDim2.fromOffset(1,1),ZIndex=z})
-	-- inner shadow (bottom, right = Sha/button-shadow)
 	mk("Frame",{Parent=p,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.new(0,1,1,-2),ZIndex=z})
 	mk("Frame",{Parent=p,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(0,1,1,-2),Position=UDim2.new(1,-2,0,1),ZIndex=z})
 end
 
--- sunken-outer: inset -1px -1px button-highlight, inset 1px 1px window-frame
--- sunken-inner: inset -2px -2px button-face, inset 2px 2px button-shadow
 local function sunken(p,z)
 	z=z or p.ZIndex+1
-	-- outer (top, left = Dk/window-frame)
 	mk("Frame",{Parent=p,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(),ZIndex=z})
 	mk("Frame",{Parent=p,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(),ZIndex=z})
-	-- outer (bottom, right = Hi/button-highlight)
 	mk("Frame",{Parent=p,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,-1),ZIndex=z})
 	mk("Frame",{Parent=p,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,-1,0,0),ZIndex=z})
-	-- inner (top, left = Sha/button-shadow)
 	mk("Frame",{Parent=p,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.fromOffset(1,1),ZIndex=z})
 	mk("Frame",{Parent=p,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(0,1,1,-2),Position=UDim2.fromOffset(1,1),ZIndex=z})
-	-- inner (bottom, right = BtnF/button-face)
+	mk("Frame",{Parent=p,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.new(0,1,1,-2),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(0,1,1,-2),Position=UDim2.new(1,-2,0,1),ZIndex=z})
+end
+
+-- ponytail: field border (checkbox, input) — 98.css flips window-frame and button-shadow
+local function fieldBorder(p,z)
+	z=z or p.ZIndex+1
+	mk("Frame",{Parent=p,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,-1),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,-1,0,0),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.fromOffset(1,1),ZIndex=z})
+	mk("Frame",{Parent=p,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.new(0,1,1,-2),Position=UDim2.fromOffset(1,1),ZIndex=z})
 	mk("Frame",{Parent=p,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.new(0,1,1,-2),ZIndex=z})
 	mk("Frame",{Parent=p,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(0,1,1,-2),Position=UDim2.new(1,-2,0,1),ZIndex=z})
 end
 
 local function clearBorders(p)
-	for _,c in ipairs(p:GetChildren()) do if c:IsA("Frame") and c.Size.Y.Scale <= 0.01 or c.Size.X.Scale <= 0.01 then c:Destroy() end end
+	for _,c in ipairs(p:GetChildren()) do if c:IsA("Frame") and (c.Size.Y.Scale <= 0.01 or c.Size.X.Scale <= 0.01) then c:Destroy() end end
 end
+local function pressBorder(p) clearBorders(p); sunken(p) end
+local function releaseBorder(p) clearBorders(p); raised(p) end
 
-local function pressBorder(p)
-	-- sunken look on press
-	clearBorders(p)
-	sunken(p)
-end
-
-local function releaseBorder(p)
-	clearBorders(p)
-	raised(p)
-end
-
--- Etched border for GroupBox (fieldset in 98.css: grey + white groove)
+-- Etched groove for fieldset/GroupBox
 local function etched(p,z)
 	z=z or p.ZIndex+1
 	mk("Frame",{Parent=p,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(1,-4,0,1),Position=UDim2.fromOffset(2,0),ZIndex=z})
@@ -100,10 +92,27 @@ local function etched(p,z)
 	mk("Frame",{Parent=p,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(0,1,1,-4),Position=UDim2.new(1,-1,0,2),ZIndex=z})
 end
 
--- Win98 title bar button
-local function titleBtn(parent, glyph, onClick)
-	local b = mk("TextButton",{Parent=parent,BackgroundColor3=W.Face,Size=UDim2.fromOffset(16,14),AutoButtonColor=false,Font=Enum.Font.RobotoMono,Text=glyph,TextColor3=W.Tx,TextSize=10,BorderSizePixel=0,ZIndex=5})
-	raised(b,6)
+-- Title bar button — draw icon with frames instead of unreliable unicode glyphs
+local function titleBtn(parent, icon, onClick, z)
+	z = z or 10
+	local b = mk("TextButton",{Parent=parent,BackgroundColor3=W.Face,Size=UDim2.fromOffset(16,14),AutoButtonColor=false,Font=Enum.Font.SourceSans,Text="",TextSize=1,BorderSizePixel=0,ZIndex=z})
+	raised(b,z+1)
+	-- draw icon with pixel frames
+	if icon == "min" then
+		mk("Frame",{Parent=b,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.fromOffset(6,2),Position=UDim2.fromOffset(4,10),ZIndex=z+2})
+	elseif icon == "max" then
+		mk("Frame",{Parent=b,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.fromOffset(9,1),Position=UDim2.fromOffset(3,2),ZIndex=z+2})
+		mk("Frame",{Parent=b,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.fromOffset(9,1),Position=UDim2.fromOffset(3,3),ZIndex=z+2})
+		mk("Frame",{Parent=b,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.fromOffset(1,7),Position=UDim2.fromOffset(3,4),ZIndex=z+2})
+		mk("Frame",{Parent=b,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.fromOffset(1,7),Position=UDim2.fromOffset(11,4),ZIndex=z+2})
+		mk("Frame",{Parent=b,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.fromOffset(9,1),Position=UDim2.fromOffset(3,10),ZIndex=z+2})
+	elseif icon == "close" then
+		-- X shape
+		for i=0,6 do
+			mk("Frame",{Parent=b,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.fromOffset(2,1),Position=UDim2.fromOffset(3+i,3+i),ZIndex=z+2})
+			mk("Frame",{Parent=b,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.fromOffset(2,1),Position=UDim2.fromOffset(11-i,3+i),ZIndex=z+2})
+		end
+	end
 	b.MouseButton1Down:Connect(function() pressBorder(b) end)
 	b.MouseButton1Up:Connect(function() releaseBorder(b) end)
 	if onClick then b.MouseButton1Click:Connect(onClick) end
@@ -120,15 +129,11 @@ function Kavo.CreateLib(title, _themeIn)
 	for _,v in ipairs(game.CoreGui:GetChildren()) do if v.Name==LID then v:Destroy() end end
 
 	local gui = mk("ScreenGui",{Name=LID,Parent=game.CoreGui,ZIndexBehavior=Enum.ZIndexBehavior.Global,ResetOnSpawn=false})
-
-	-- Popup layer — dropdown lists render here so they aren't clipped by ScrollingFrame
 	local popupLayer = mk("Frame",{Name="Popups",Parent=gui,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),ZIndex=100})
 
-	-- Main window — 98.css uses --border-window-outer/inner which swap BtnF↔Hi vs raised
-	local main = mk("Frame",{Name="Main",Parent=gui,BackgroundColor3=W.Face,ClipsDescendants=true,Position=UDim2.new(0.5,-260,0.5,-190),Size=UDim2.fromOffset(520,380),BorderSizePixel=0,ZIndex=1})
-	-- window-outer: inset -1px -1px window-frame, inset 1px 1px button-face
-	-- window-inner: inset -2px -2px button-shadow, inset 2px 2px button-highlight
-	do
+	-- Main window — 98.css .window borders
+	local main = mk("Frame",{Name="Main",Parent=gui,BackgroundColor3=W.Face,ClipsDescendants=false,Position=UDim2.new(0.5,-260,0.5,-190),Size=UDim2.fromOffset(520,380),BorderSizePixel=0,ZIndex=1})
+	do -- window border: outer BtnF/Dk, inner Hi/Sha
 		local z=2
 		mk("Frame",{Parent=main,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(),ZIndex=z})
 		mk("Frame",{Parent=main,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(),ZIndex=z})
@@ -140,43 +145,41 @@ function Kavo.CreateLib(title, _themeIn)
 		mk("Frame",{Parent=main,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(0,1,1,-2),Position=UDim2.new(1,-2,0,1),ZIndex=z})
 	end
 
-	-- Title bar — 98.css: padding 3px 2px 3px 3px, gradient navy→#1084d0
+	-- Title bar — 98.css: 18px, padding 3px 2px 3px 3px
 	local hdr = mk("Frame",{Parent=main,BackgroundColor3=W.Title,Size=UDim2.new(1,-6,0,18),Position=UDim2.fromOffset(3,3),BorderSizePixel=0,ZIndex=3})
 	drag(hdr,main)
-	-- 98.css: .title-bar-text { font-weight:700, letter-spacing:0, color:#fff }
-	mk("TextLabel",{Parent=hdr,BackgroundTransparency=1,Position=UDim2.fromOffset(3,0),Size=UDim2.new(1,-58,1,0),Font=Enum.Font.SourceSansBold,Text=title,RichText=true,TextColor3=W.TitTx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=4})
+	mk("TextLabel",{Parent=hdr,BackgroundTransparency=1,Position=UDim2.fromOffset(3,0),Size=UDim2.new(1,-60,1,0),Font=Enum.Font.SourceSansBold,Text=title,RichText=true,TextColor3=W.TitTx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=4})
 
-	-- Title buttons — ZIndex must beat header(3) and title text(4)
-	local btnBar = mk("Frame",{Parent=hdr,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,-2,0.5,0),Size=UDim2.fromOffset(54,14),ZIndex=5})
+	-- Title buttons — frame-drawn pixel icons, high ZIndex
+	local btnBar = mk("Frame",{Parent=hdr,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,-2,0.5,0),Size=UDim2.fromOffset(54,14),ZIndex=10})
 	list(btnBar,2,Enum.FillDirection.Horizontal)
-	titleBtn(btnBar,"_",function() main.Visible=not main.Visible end)
-	titleBtn(btnBar,"□",nil)
-	titleBtn(btnBar,"×",function() gui:Destroy() end)
+	titleBtn(btnBar,"min",function() main.Visible=not main.Visible end,10)
+	titleBtn(btnBar,"max",nil,10)
+	titleBtn(btnBar,"close",function() gui:Destroy() end,10)
 
-	-- Tab row — 98.css: menu[role=tablist] { margin:0 0 -2px; padding-left:3px }
-	-- Sits flush with content X, tabs overlap content top by 2px
-	local tabRow = mk("Frame",{Parent=main,BackgroundTransparency=1,Position=UDim2.fromOffset(3,24),Size=UDim2.new(1,-6,0,24),BorderSizePixel=0,ZIndex=3})
-	local tabLay = list(tabRow,0,Enum.FillDirection.Horizontal)
-	pad(tabRow,0,0,3,0) -- padding-left:3px per 98.css
+	-- Tab row — sits directly above content, tabs overlap 2px into content border
+	-- 98.css: tablist margin:0 0 -2px, padding-left:3px
+	local tabRow = mk("Frame",{Parent=main,BackgroundTransparency=1,Position=UDim2.fromOffset(3,23),Size=UDim2.new(1,-6,0,24),BorderSizePixel=0,ZIndex=3})
+	list(tabRow,0,Enum.FillDirection.Horizontal)
+	pad(tabRow,0,0,3,0)
 
-	-- Content well — top lines up so active tabs (26px from Y=22) overlap 2px into border
-	local content = mk("Frame",{Parent=main,BackgroundColor3=W.Face,Position=UDim2.fromOffset(3,46),Size=UDim2.new(1,-6,1,-68),BorderSizePixel=0,ZIndex=3})
+	-- Content well — Y = tabRow.Y + tabRow.Height - 2 (tabs overlap 2px)
+	-- tabRow at Y=23, height=24, so content at Y=45
+	local content = mk("Frame",{Parent=main,BackgroundColor3=W.Face,Position=UDim2.fromOffset(3,45),Size=UDim2.new(1,-6,1,-66),BorderSizePixel=0,ZIndex=3})
 	sunken(content,4)
 
-	-- Status bar — 98.css: .status-bar-field { box-shadow: inset -1px -1px BtnF, inset 1px 1px Sha }
+	-- Status bar — 98.css: .status-bar-field { inset -1px -1px BtnF, inset 1px 1px Sha }
 	local sbar = mk("Frame",{Parent=main,BackgroundColor3=W.Face,Position=UDim2.new(0,4,1,-19),Size=UDim2.new(1,-8,0,16),BorderSizePixel=0,ZIndex=3})
 	do
 		local z=4
-		-- status-field: inset 1px 1px grey (top-left shadow)
 		mk("Frame",{Parent=sbar,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(),ZIndex=z})
 		mk("Frame",{Parent=sbar,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(),ZIndex=z})
-		-- status-field: inset -1px -1px BtnF (bottom-right highlight)
 		mk("Frame",{Parent=sbar,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,-1),ZIndex=z})
 		mk("Frame",{Parent=sbar,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,-1,0,0),ZIndex=z})
 	end
-	mk("TextLabel",{Parent=sbar,BackgroundTransparency=1,Position=UDim2.fromOffset(3,2),Size=UDim2.new(1,-6,1,-2),Font=Enum.Font.SourceSans,Text="Ready",TextColor3=W.Tx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=5})
+	mk("TextLabel",{Parent=sbar,BackgroundTransparency=1,Position=UDim2.fromOffset(3,1),Size=UDim2.new(1,-6,1,-1),Font=Enum.Font.SourceSans,Text="Ready",TextColor3=W.Tx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=5})
 
-	-- Notification holder
+	-- Notifications
 	local nHolder = mk("Frame",{Parent=gui,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0),Position=UDim2.new(1,-12,0,12),Size=UDim2.fromOffset(260,500),ZIndex=90})
 	list(nHolder,4)
 
@@ -184,44 +187,38 @@ function Kavo.CreateLib(title, _themeIn)
 		cfg = cfg or {}
 		local n = mk("Frame",{Parent=nHolder,BackgroundColor3=W.Face,Size=UDim2.new(1,0,0,68),BorderSizePixel=0,ZIndex=91})
 		raised(n,92)
-		local nh = mk("Frame",{Parent=n,BackgroundColor3=W.Title,Size=UDim2.new(1,-6,0,20),Position=UDim2.fromOffset(3,3),BorderSizePixel=0,ZIndex=93})
-		mk("TextLabel",{Parent=nh,BackgroundTransparency=1,Position=UDim2.fromOffset(3,0),Size=UDim2.new(1,-6,1,0),Font=Enum.Font.SourceSansBold,Text=cfg.Title or "Notice",TextColor3=W.TitTx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=94})
-		mk("TextLabel",{Parent=n,BackgroundTransparency=1,Position=UDim2.fromOffset(8,28),Size=UDim2.new(1,-16,0,34),Font=Enum.Font.SourceSans,Text=cfg.Text or "",TextColor3=W.Tx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,TextWrapped=true,ZIndex=93})
+		local nh = mk("Frame",{Parent=n,BackgroundColor3=W.Title,Size=UDim2.new(1,-6,0,18),Position=UDim2.fromOffset(3,3),BorderSizePixel=0,ZIndex=93})
+		mk("TextLabel",{Parent=nh,BackgroundTransparency=1,Position=UDim2.fromOffset(3,0),Size=UDim2.new(1,-6,1,0),Font=Enum.Font.SourceSansBold,Text=cfg.Title or "Notice",TextColor3=W.TitTx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=94})
+		mk("TextLabel",{Parent=n,BackgroundTransparency=1,Position=UDim2.fromOffset(8,26),Size=UDim2.new(1,-16,0,36),Font=Enum.Font.SourceSans,Text=cfg.Text or "",TextColor3=W.Tx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,TextWrapped=true,ZIndex=93})
 		task.delay(cfg.Duration or 4, function() n:Destroy() end)
 	end
 
-	-- Close any open dropdown popup when clicking elsewhere
 	local activePopup = nil
-	local function closePopup()
-		if activePopup then activePopup:Destroy(); activePopup=nil end
-	end
+	local function closePopup() if activePopup then activePopup:Destroy(); activePopup=nil end end
 
 	local Lib = {}; local first = true
 
 	function Lib:NewTab(name)
 		name = name or "Tab"
 
-		-- 98.css --border-tab: no bottom, top-left/right radius 3px
-		local btn = mk("TextButton",{Parent=tabRow,BackgroundColor3=W.Face,Size=UDim2.new(0,0,0,24),AutomaticSize=Enum.AutomaticSize.X,AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=name,TextColor3=W.Tx,TextSize=12,BorderSizePixel=0,ZIndex=5,ClipsDescendants=false})
-		pad(btn,3,3,8,8)
+		-- Tab button — 98.css --border-tab, no bottom border
+		local btn = mk("TextButton",{Parent=tabRow,BackgroundColor3=W.Face,Size=UDim2.new(0,0,0,24),AutomaticSize=Enum.AutomaticSize.X,AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=name,TextColor3=W.Tx,TextSize=13,BorderSizePixel=0,ZIndex=5,ClipsDescendants=false})
+		pad(btn,4,4,8,8)
 
-		-- Left: Hi outer, BtnF inner
-		mk("Frame",{Name="TLeftOuter",Parent=btn,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(),ZIndex=6})
-		mk("Frame",{Name="TLeftInner",Parent=btn,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(0,1,1,-1),Position=UDim2.fromOffset(1,1),ZIndex=6})
-		-- Top: Hi outer, BtnF inner
-		mk("Frame",{Name="TTopOuter",Parent=btn,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.fromOffset(1,0),ZIndex=6})
-		mk("Frame",{Name="TTopInner",Parent=btn,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(1,-4,0,1),Position=UDim2.fromOffset(2,1),ZIndex=6})
-		-- Right: Dk outer, Sha inner
-		mk("Frame",{Name="TRightOuter",Parent=btn,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,-1,0,0),ZIndex=6})
-		mk("Frame",{Name="TRightInner",Parent=btn,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(0,1,1,-1),Position=UDim2.new(1,-2,0,1),ZIndex=6})
-		-- Bottom cover: extends 4px past btn bottom to fully mask the 2px content border
-		local btm = mk("Frame",{Name="TabBottom",Parent=btn,BackgroundColor3=W.Face,BorderSizePixel=0,Size=UDim2.new(1,-2,0,4),Position=UDim2.new(0,1,1,-2),ZIndex=10})
+		-- Tab borders: left Hi+BtnF, top Hi+BtnF, right Dk+Sha — NO bottom
+		mk("Frame",{Name="B",Parent=btn,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(),ZIndex=6})
+		mk("Frame",{Name="B",Parent=btn,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(0,1,1,-1),Position=UDim2.fromOffset(1,1),ZIndex=6})
+		mk("Frame",{Name="B",Parent=btn,BackgroundColor3=W.Hi,BorderSizePixel=0,Size=UDim2.new(1,-2,0,1),Position=UDim2.fromOffset(1,0),ZIndex=6})
+		mk("Frame",{Name="B",Parent=btn,BackgroundColor3=W.BtnF,BorderSizePixel=0,Size=UDim2.new(1,-4,0,1),Position=UDim2.fromOffset(2,1),ZIndex=6})
+		mk("Frame",{Name="B",Parent=btn,BackgroundColor3=W.Dk,BorderSizePixel=0,Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,-1,0,0),ZIndex=6})
+		mk("Frame",{Name="B",Parent=btn,BackgroundColor3=W.Sha,BorderSizePixel=0,Size=UDim2.new(0,1,1,-1),Position=UDim2.new(1,-2,0,1),ZIndex=6})
+		-- Bottom cover — masks content top border when active. Extends 4px below tab.
+		local btm = mk("Frame",{Name="TabBottom",Parent=btn,BackgroundColor3=W.Face,BorderSizePixel=0,Size=UDim2.new(1,-2,0,4),Position=UDim2.new(0,1,1,-2),ZIndex=9})
 
-		-- Page — 98.css .window-body { margin:8px }
+		-- Page
 		local pg = mk("ScrollingFrame",{Parent=content,BackgroundColor3=W.Face,BackgroundTransparency=0,Size=UDim2.new(1,-4,1,-4),Position=UDim2.fromOffset(2,2),ScrollBarThickness=16,ScrollBarImageColor3=W.BtnF,BorderSizePixel=0,Visible=false,CanvasSize=UDim2.fromOffset(0,0),ZIndex=5})
-		local pgLay = list(pg,4); pad(pg,6,6,8,8); scrollFit(pg,pgLay)
+		local pgLay = list(pg,6); pad(pg,8,8,10,10); scrollFit(pg,pgLay)
 
-		-- 98.css: selected tab gets margin-top:-2px, padding-bottom:2px, z-index:8
 		local function activate()
 			closePopup()
 			for _,b in ipairs(tabRow:GetChildren()) do
@@ -238,7 +235,7 @@ function Kavo.CreateLib(title, _themeIn)
 
 			btn.Font = Enum.Font.SourceSans
 			btn.Size = UDim2.new(0,0,0,26)
-			btn.Position = UDim2.fromOffset(0,-2) -- margin-top:-2px overlap
+			btn.Position = UDim2.fromOffset(0,-2)
 			btn.ZIndex = 8
 			btm.Visible = true
 			pg.Visible = true
@@ -252,27 +249,25 @@ function Kavo.CreateLib(title, _themeIn)
 		function Tab:NewSection(secName)
 			secName = secName or "Section"
 
-			-- 98.css fieldset: padding 10px, padding-block-start 8px
 			local box = mk("Frame",{Parent=pg,BackgroundColor3=W.Face,Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y,BorderSizePixel=0,ZIndex=5})
-			pad(box,12,6,2,2)
+			pad(box,14,8,2,2)
 			etched(box,6)
 
-			-- Legend on the etched border
-			local legend = mk("TextLabel",{Parent=box,BackgroundColor3=W.Face,Position=UDim2.fromOffset(10,-6),Size=UDim2.new(0,0,0,12),AutomaticSize=Enum.AutomaticSize.X,Font=Enum.Font.SourceSans,Text=" "..secName.." ",RichText=true,TextColor3=W.Tx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,BorderSizePixel=0,ZIndex=7})
+			local legend = mk("TextLabel",{Parent=box,BackgroundColor3=W.Face,Position=UDim2.fromOffset(10,-7),Size=UDim2.new(0,0,0,14),AutomaticSize=Enum.AutomaticSize.X,Font=Enum.Font.SourceSans,Text=" "..secName.." ",RichText=true,TextColor3=W.Tx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,BorderSizePixel=0,ZIndex=7})
 
 			local inner = mk("Frame",{Parent=box,BackgroundTransparency=1,Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y,ZIndex=5})
-			list(inner,4); pad(inner,2,4,8,8)
+			list(inner,6); pad(inner,4,4,8,8)
 
 			local S = {}
 			function S:UpdateSection(t) legend.Text=" "..t.." " end
 
 			local function row(h)
-				return mk("Frame",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,h or 24),BorderSizePixel=0,ZIndex=5})
+				return mk("Frame",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,h or 22),BorderSizePixel=0,ZIndex=5})
 			end
 
 			function S:NewButton(n,tip,cb) n=n or "Button";cb=cb or function()end
 				local f = row(26)
-				local b = mk("TextButton",{Parent=f,BackgroundColor3=W.Face,AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,0),Size=UDim2.new(1,0,0,23),AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=11,BorderSizePixel=0,ZIndex=6})
+				local b = mk("TextButton",{Parent=f,BackgroundColor3=W.Face,AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,0),Size=UDim2.new(1,0,0,23),AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=13,BorderSizePixel=0,ZIndex=6})
 				raised(b,7)
 				b.MouseButton1Down:Connect(function() pressBorder(b) end)
 				b.MouseButton1Up:Connect(function() releaseBorder(b) end)
@@ -281,11 +276,12 @@ function Kavo.CreateLib(title, _themeIn)
 			end
 
 			function S:NewToggle(n,tip,cb) n=n or "Toggle";cb=cb or function()end; local on=false
-				local f = row(22)
-				local chk = mk("Frame",{Parent=f,BackgroundColor3=W.Win,AnchorPoint=Vector2.new(0,0.5),Position=UDim2.new(0,0,0.5,0),Size=UDim2.fromOffset(13,13),BorderSizePixel=0,ZIndex=6})
-				sunken(chk,7)
-				local mark = mk("TextLabel",{Parent=chk,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Font=Enum.Font.SourceSansBold,Text="",TextColor3=W.Tx,TextSize=11,ZIndex=8})
-				local lbl = mk("TextLabel",{Parent=f,BackgroundTransparency=1,Position=UDim2.fromOffset(19,0),Size=UDim2.new(1,-19,1,0),Font=Enum.Font.SourceSans,Text=n,RichText=true,TextColor3=W.Tx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
+				local f = row(20)
+				-- 98.css checkbox: 13x13 sunken white box, label 6px to the right
+				local chk = mk("Frame",{Parent=f,BackgroundColor3=W.Win,Position=UDim2.fromOffset(0,3),Size=UDim2.fromOffset(13,13),BorderSizePixel=0,ZIndex=6})
+				fieldBorder(chk,7)
+				local mark = mk("TextLabel",{Parent=chk,BackgroundTransparency=1,Position=UDim2.fromOffset(2,0),Size=UDim2.new(1,-4,1,0),Font=Enum.Font.SourceSansBold,Text="",TextColor3=W.Dk,TextSize=14,ZIndex=8})
+				local lbl = mk("TextLabel",{Parent=f,BackgroundTransparency=1,Position=UDim2.fromOffset(19,0),Size=UDim2.new(1,-19,1,0),Font=Enum.Font.SourceSans,Text=n,RichText=true,TextColor3=W.Tx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
 				local hit = mk("TextButton",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Text="",BorderSizePixel=0,ZIndex=9})
 				local function set(v) on=v; mark.Text=v and "✓" or "" end
 				hit.MouseButton1Click:Connect(function() set(not on); pcall(cb,on) end)
@@ -293,19 +289,18 @@ function Kavo.CreateLib(title, _themeIn)
 			end
 
 			function S:NewSlider(n,tip,maxV,minV,cb) n=n or "Slider";maxV=maxV or 100;minV=minV or 0;cb=cb or function()end
-				local f = mk("Frame",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,38),BorderSizePixel=0,ZIndex=5})
-				mk("TextLabel",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(0.6,0,0,16),Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
-				local vl = mk("TextLabel",{Parent=f,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0),Position=UDim2.new(1,0,0,0),Size=UDim2.fromOffset(50,16),Font=Enum.Font.SourceSans,Text=tostring(minV),TextColor3=W.Tx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Right,ZIndex=6})
-				-- Sunken track
-				local track = mk("Frame",{Parent=f,BackgroundColor3=W.Dk,Position=UDim2.new(0,4,0,22),Size=UDim2.new(1,-8,0,2),BorderSizePixel=0,ZIndex=6})
-				sunken(track,7)
-				-- Raised thumb
-				local thumb = mk("Frame",{Parent=f,BackgroundColor3=W.Face,Position=UDim2.new(0,0,0,14),Size=UDim2.fromOffset(11,21),BorderSizePixel=0,ZIndex=8})
+				local f = mk("Frame",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,36),BorderSizePixel=0,ZIndex=5})
+				mk("TextLabel",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(0.6,0,0,14),Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
+				local vl = mk("TextLabel",{Parent=f,BackgroundTransparency=1,AnchorPoint=Vector2.new(1,0),Position=UDim2.new(1,0,0,0),Size=UDim2.fromOffset(50,14),Font=Enum.Font.SourceSans,Text=tostring(minV),TextColor3=W.Tx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Right,ZIndex=6})
+				-- Track: 98.css range track is 2px black with 1px inset shadows
+				local track = mk("Frame",{Parent=f,BackgroundColor3=W.Dk,Position=UDim2.new(0,0,0,22),Size=UDim2.new(1,0,0,2),BorderSizePixel=0,ZIndex=6})
+				-- Thumb: 98.css is 11x21 raised
+				local thumb = mk("Frame",{Parent=f,BackgroundColor3=W.Face,Position=UDim2.new(0,0,0,15),Size=UDim2.fromOffset(11,16),BorderSizePixel=0,ZIndex=8})
 				raised(thumb,9)
 				local dragging = false
 				local function upd(x)
 					local r = cl((x - track.AbsolutePosition.X) / track.AbsoluteSize.X, 0, 1)
-					thumb.Position = UDim2.new(0, 4 + fl(r * (track.AbsoluteSize.X - 11)), 0, 14)
+					thumb.Position = UDim2.new(0, fl(r * (track.AbsoluteSize.X - 11)), 0, 15)
 					local v = fl(minV + r * (maxV - minV))
 					vl.Text = tostring(v); pcall(cb, v)
 				end
@@ -317,18 +312,18 @@ function Kavo.CreateLib(title, _themeIn)
 
 			function S:NewTextBox(n,tip,cb) n=n or "Input";cb=cb or function()end
 				local f = row(24)
-				mk("TextLabel",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(0.3,0,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
-				local bx = mk("TextBox",{Parent=f,BackgroundColor3=W.Win,Position=UDim2.new(0.32,0,0.5,0),AnchorPoint=Vector2.new(0,0.5),Size=UDim2.new(0.68,0,0,21),Font=Enum.Font.SourceSans,PlaceholderText="",PlaceholderColor3=W.Sha,Text="",TextColor3=W.Tx,TextSize=11,ClearTextOnFocus=false,BorderSizePixel=0,ClipsDescendants=true,ZIndex=6})
-				sunken(bx,7)
+				mk("TextLabel",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(0.3,0,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
+				local bx = mk("TextBox",{Parent=f,BackgroundColor3=W.Win,Position=UDim2.new(0.32,0,0.5,0),AnchorPoint=Vector2.new(0,0.5),Size=UDim2.new(0.68,0,0,21),Font=Enum.Font.SourceSans,PlaceholderText="",PlaceholderColor3=W.Sha,Text="",TextColor3=W.Tx,TextSize=13,ClearTextOnFocus=false,BorderSizePixel=0,ClipsDescendants=true,ZIndex=6})
+				fieldBorder(bx,7)
 				bx.FocusLost:Connect(function(e) if e then pcall(cb,bx.Text); bx.Text="" end end)
 			end
 
 			function S:NewKeybind(n,tip,dk,cb) n=n or "Keybind";cb=cb or function()end; local key=dk
 				local f = row(24)
-				mk("TextLabel",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(1,-64,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
+				mk("TextLabel",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(1,-64,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
 				local kd = mk("Frame",{Parent=f,BackgroundColor3=W.Win,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,0,0.5,0),Size=UDim2.fromOffset(58,21),BorderSizePixel=0,ZIndex=6})
-				sunken(kd,7)
-				local kl = mk("TextLabel",{Parent=kd,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Font=Enum.Font.SourceSans,Text=key and key.Name or "None",TextColor3=W.Tx,TextSize=11,ZIndex=8})
+				fieldBorder(kd,7)
+				local kl = mk("TextLabel",{Parent=kd,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Font=Enum.Font.SourceSans,Text=key and key.Name or "None",TextColor3=W.Tx,TextSize=13,ZIndex=8})
 				local listening = false
 				local hit = mk("TextButton",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Text="",BorderSizePixel=0,ZIndex=9})
 				hit.MouseButton1Click:Connect(function()
@@ -342,31 +337,25 @@ function Kavo.CreateLib(title, _themeIn)
 
 			function S:NewDropdown(n,tip,items,cb) n=n or "Select";items=items or {};cb=cb or function()end
 				local f = row(24)
-				mk("TextLabel",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(0.3,0,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
+				mk("TextLabel",{Parent=f,BackgroundTransparency=1,Size=UDim2.new(0.3,0,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
 
-				-- Sunken display field
-				local disp = mk("Frame",{Parent=f,BackgroundColor3=W.Win,Position=UDim2.new(0.32,0,0.5,0),AnchorPoint=Vector2.new(0,0.5),Size=UDim2.new(0.68,-18,0,20),BorderSizePixel=0,ZIndex=6})
-				sunken(disp,7)
-				local dispTx = mk("TextLabel",{Parent=disp,BackgroundTransparency=1,Position=UDim2.fromOffset(4,0),Size=UDim2.new(1,-8,1,0),Font=Enum.Font.SourceSans,Text="",TextColor3=W.Tx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,ClipsDescendants=true,ZIndex=8})
+				local disp = mk("Frame",{Parent=f,BackgroundColor3=W.Win,Position=UDim2.new(0.32,0,0.5,0),AnchorPoint=Vector2.new(0,0.5),Size=UDim2.new(0.68,-18,0,21),BorderSizePixel=0,ZIndex=6})
+				fieldBorder(disp,7)
+				local dispTx = mk("TextLabel",{Parent=disp,BackgroundTransparency=1,Position=UDim2.fromOffset(4,0),Size=UDim2.new(1,-8,1,0),Font=Enum.Font.SourceSans,Text="",TextColor3=W.Tx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,ClipsDescendants=true,ZIndex=8})
 
-				-- Arrow button
-				local arr = mk("TextButton",{Parent=f,BackgroundColor3=W.Face,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,0,0.5,0),Size=UDim2.fromOffset(16,20),AutoButtonColor=false,Font=Enum.Font.SourceSans,Text="▼",TextColor3=W.Tx,TextSize=10,BorderSizePixel=0,ZIndex=6})
+				local arr = mk("TextButton",{Parent=f,BackgroundColor3=W.Face,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,0,0.5,0),Size=UDim2.fromOffset(16,21),AutoButtonColor=false,Font=Enum.Font.SourceSans,Text="▼",TextColor3=W.Tx,TextSize=10,BorderSizePixel=0,ZIndex=6})
 				raised(arr,7)
 
-				-- Build options in popup layer (not clipped by ScrollingFrame)
 				local function buildPopup(lst)
 					closePopup()
-					local itemH = 18
-					local popH = #lst * itemH + 4
+					local itemH = 18; local popH = #lst * itemH + 4
 					local absPos = disp.AbsolutePosition
 					local absW = disp.AbsoluteSize.X + 16
-
-					local popup = mk("Frame",{Parent=popupLayer,BackgroundColor3=W.Win,Position=UDim2.fromOffset(absPos.X, absPos.Y + 20),Size=UDim2.fromOffset(absW, popH),BorderSizePixel=0,ZIndex=101})
-					sunken(popup,102)
+					local popup = mk("Frame",{Parent=popupLayer,BackgroundColor3=W.Win,Position=UDim2.fromOffset(absPos.X, absPos.Y + 21),Size=UDim2.fromOffset(absW, popH),BorderSizePixel=0,ZIndex=101})
+					fieldBorder(popup,102)
 					activePopup = popup
-
 					for idx,v in ipairs(lst) do
-						local o = mk("TextButton",{Parent=popup,BackgroundColor3=W.Win,Size=UDim2.new(1,-4,0,itemH),Position=UDim2.fromOffset(2, (idx-1)*itemH + 2),AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=" "..v,TextColor3=W.Tx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,BorderSizePixel=0,ZIndex=103})
+						local o = mk("TextButton",{Parent=popup,BackgroundColor3=W.Win,Size=UDim2.new(1,-4,0,itemH),Position=UDim2.fromOffset(2, (idx-1)*itemH + 2),AutoButtonColor=false,Font=Enum.Font.SourceSans,Text=" "..v,TextColor3=W.Tx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,BorderSizePixel=0,ZIndex=103})
 						o.MouseEnter:Connect(function() o.BackgroundColor3=W.Sel; o.TextColor3=W.SelTx end)
 						o.MouseLeave:Connect(function() o.BackgroundColor3=W.Win; o.TextColor3=W.Tx end)
 						o.MouseButton1Click:Connect(function() dispTx.Text=v; pcall(cb,v); closePopup() end)
@@ -376,11 +365,9 @@ function Kavo.CreateLib(title, _themeIn)
 				local open = false
 				local function toggle()
 					if open then closePopup(); open=false; return end
-					open = true
-					buildPopup(items)
+					open = true; buildPopup(items)
 				end
 
-				-- Click on display or arrow opens dropdown
 				local hit = mk("TextButton",{Parent=f,BackgroundTransparency=1,Position=UDim2.new(0.32,0,0,0),Size=UDim2.new(0.68,0,1,0),Text="",BorderSizePixel=0,ZIndex=10})
 				hit.MouseButton1Click:Connect(toggle)
 
@@ -394,18 +381,16 @@ function Kavo.CreateLib(title, _themeIn)
 
 			function S:NewColorPicker(n,tip,dc,cb) n=n or "Color";dc=dc or Color3.new(1,1,1);cb=cb or function()end
 				local h,s,v = Color3.toHSV(dc); local cpO = false
-				local wrap = mk("Frame",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,24),ClipsDescendants=true,BorderSizePixel=0,ZIndex=5})
+				local wrap = mk("Frame",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,22),ClipsDescendants=true,BorderSizePixel=0,ZIndex=5})
 
-				local head = mk("Frame",{Parent=wrap,BackgroundTransparency=1,Size=UDim2.new(1,0,0,24),BorderSizePixel=0,ZIndex=5})
-				mk("TextLabel",{Parent=head,BackgroundTransparency=1,Size=UDim2.new(1,-30,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
-				local pre = mk("Frame",{Parent=head,BackgroundColor3=dc,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,0,0.5,0),Size=UDim2.fromOffset(24,16),BorderSizePixel=0,ZIndex=6})
-				sunken(pre,7)
+				local head = mk("Frame",{Parent=wrap,BackgroundTransparency=1,Size=UDim2.new(1,0,0,22),BorderSizePixel=0,ZIndex=5})
+				mk("TextLabel",{Parent=head,BackgroundTransparency=1,Size=UDim2.new(1,-30,1,0),Font=Enum.Font.SourceSans,Text=n,TextColor3=W.Tx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6})
+				local pre = mk("Frame",{Parent=head,BackgroundColor3=dc,AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,0,0.5,0),Size=UDim2.fromOffset(24,14),BorderSizePixel=0,ZIndex=6})
+				fieldBorder(pre,7)
 
-				-- Hue/Sat picker
-				local hi = mk("ImageButton",{Parent=wrap,BackgroundTransparency=1,Position=UDim2.fromOffset(4,28),Size=UDim2.new(0.55,0,0,70),Image="rbxassetid://6523286724",ZIndex=6})
+				local hi = mk("ImageButton",{Parent=wrap,BackgroundTransparency=1,Position=UDim2.fromOffset(4,26),Size=UDim2.new(0.55,0,0,70),Image="rbxassetid://6523286724",ZIndex=6})
 				local hc = mk("Frame",{Parent=hi,Size=UDim2.fromOffset(8,8),BackgroundColor3=W.Dk,BorderSizePixel=0,AnchorPoint=Vector2.new(0.5,0.5),ZIndex=7})
-				-- Value picker
-				local vi = mk("ImageButton",{Parent=wrap,BackgroundTransparency=1,Position=UDim2.new(0.58,4,0,28),Size=UDim2.fromOffset(14,70),Image="rbxassetid://6523291212",ZIndex=6})
+				local vi = mk("ImageButton",{Parent=wrap,BackgroundTransparency=1,Position=UDim2.new(0.58,4,0,26),Size=UDim2.fromOffset(14,70),Image="rbxassetid://6523291212",ZIndex=6})
 				local vc = mk("Frame",{Parent=vi,Size=UDim2.fromOffset(14,4),BackgroundColor3=W.Dk,BorderSizePixel=0,AnchorPoint=Vector2.new(0.5,0),ZIndex=7})
 
 				local pH,pV = false,false
@@ -427,12 +412,12 @@ function Kavo.CreateLib(title, _themeIn)
 				local headHit = mk("TextButton",{Parent=head,BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Text="",BorderSizePixel=0,ZIndex=9})
 				headHit.MouseButton1Click:Connect(function()
 					cpO = not cpO
-					wrap.Size = UDim2.new(1,0,0, cpO and 104 or 24)
+					wrap.Size = UDim2.new(1,0,0, cpO and 100 or 22)
 				end)
 			end
 
 			function S:NewLabel(txt)
-				local l = mk("TextLabel",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,14),Font=Enum.Font.SourceSans,Text=txt or "",RichText=true,TextColor3=W.Tx,TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,BorderSizePixel=0,ZIndex=6})
+				local l = mk("TextLabel",{Parent=inner,BackgroundTransparency=1,Size=UDim2.new(1,0,0,16),Font=Enum.Font.SourceSans,Text=txt or "",RichText=true,TextColor3=W.Tx,TextSize=13,TextXAlignment=Enum.TextXAlignment.Left,BorderSizePixel=0,ZIndex=6})
 				local Fn={}; function Fn:UpdateLabel(t) l.Text=t end; return Fn
 			end
 
